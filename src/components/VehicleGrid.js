@@ -6,21 +6,38 @@ import {
   AllCommunityModule,
   ModuleRegistry,
   themeQuartz,
+  iconSetQuartzBold,
 } from "ag-grid-community";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const myTheme = themeQuartz.withParams({
-  backgroundColor: "#1f2836",
-  browserColorScheme: "dark",
-  chromeBackgroundColor: {
-    ref: "foregroundColor",
-    mix: 0.07,
-    onto: "backgroundColor",
-  },
-  foregroundColor: "#FFF",
-  headerFontSize: 14,
-});
+
+// to use myTheme in an application, pass it to the theme grid option
+const myTheme = themeQuartz
+	.withPart(iconSetQuartzBold)
+	.withParams({
+        accentColor: "#FFCC00",
+        backgroundColor: "#FBF1C7",
+        borderColor: "#282828",
+        browserColorScheme: "light",
+        cellTextColor: "#282828",
+        chromeBackgroundColor: "#EBDBB2",
+        columnBorder: false,
+        fontFamily: [
+            "Arial",
+            "sans-serif"
+        ],
+        foregroundColor: "#B57614",
+        headerFontSize: 14,
+        headerRowBorder: true,
+        headerTextColor: "#FFFFFF",
+        headerVerticalPaddingScale: 1.4,
+        headerBackgroundColor: "#928374",
+        oddRowBackgroundColor: "#F2E5BC",
+        spacing: 10
+    });
+
+
 
 const VehicleGrid = () => {
   const [rowData, setRowData] = useState([]);
@@ -93,12 +110,11 @@ const VehicleGrid = () => {
           onClick={onExportClick}
           style={{
             padding: '8px 16px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
+            backgroundColor: '#F2E5BC',
+            color: '#282828',
+            borderRadius: '10px',
             cursor: 'pointer',
-            fontSize: '14px'
+            fontSize: '14px',
           }}
         >
           تصدير إلى CSV
