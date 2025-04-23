@@ -7,6 +7,9 @@ import {
   ModuleRegistry,
   themeQuartz,
 } from "ag-grid-community";
+import AddButton from "./AddButton";
+import UpdateButton from "./UpdateButton";
+import DeleteButton from "./DeleteButton";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -20,12 +23,57 @@ const myTheme = themeQuartz.withParams({
   },
   foregroundColor: "#FFF",
   headerFontSize: 14,
+  headerVerticalPaddingScale: 1.4,
 });
 
+const mockVehicles = [
+  {
+    code: "V001",
+    chassis_number: "CH123456",
+    vehicle_type: "سيارة نقل",
+    vehicle_equipment: "رافعة",
+    plate_number_mokhabrat: "1234",
+    plate_number_gesh: "5678",
+    plate_number_malaky: "9101",
+    engine_number: "EN987654",
+    color: "أحمر",
+    gps_device_number: "GPS001",
+    line_number: "LN01",
+    sector: "قطاع 1",
+    model_year: "2020",
+    fuel_type: "بنزين",
+    administration: "إدارة النقل",
+    responsible_person: "أحمد علي",
+    supply_source: "شركة X",
+    notes: "بدون ملاحظات"
+  },
+  {
+    code: "V002",
+    chassis_number: "CH654321",
+    vehicle_type: "أتوبيس",
+    vehicle_equipment: "مكيف",
+    plate_number_mokhabrat: "4321",
+    plate_number_gesh: "8765",
+    plate_number_malaky: "1019",
+    engine_number: "EN123456",
+    color: "أزرق",
+    gps_device_number: "GPS002",
+    line_number: "LN02",
+    sector: "قطاع 2",
+    model_year: "2022",
+    fuel_type: "سولار",
+    administration: "إدارة التشغيل",
+    responsible_person: "محمد حسن",
+    supply_source: "شركة Y",
+    notes: "يحتاج صيانة"
+  }
+];
+
 const VehicleGrid = () => {
-  const [rowData, setRowData] = useState([]);
+  const [rowData, setRowData] = useState(mockVehicles);
   const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [colDefs] = useState([
     { field: "code", headerName: "الكود" },
     { field: "chassis_number", headerName: "رقم الشاسية" },
@@ -51,6 +99,16 @@ const VehicleGrid = () => {
     setGridApi(params.api);
   };
 
+  const onSelectionChanged = useCallback(() => {
+    if (gridApi) {
+      const selected = gridApi.getSelectedRows();
+      setSelectedRows(selected);
+      selected.forEach((row, idx) => {
+        console.log(`Selected row [${idx}]:`, row);
+      });
+    }
+  }, [gridApi]);
+
   const onExportClick = useCallback(() => {
     if (gridApi) {
       const params = {
@@ -63,6 +121,7 @@ const VehicleGrid = () => {
       gridApi.exportDataAsCsv(params);
     }
   }, [gridApi]);
+
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
@@ -76,8 +135,57 @@ const VehicleGrid = () => {
       }
     };
 
-    fetchVehicles();
+    // Uncomment the next line to fetch from API instead of using mock data
+    // fetchVehicles();
   }, []);
+
+  const handleUpdateSubmit = async (updatedRows) => {
+    try {
+      // Update each vehicle in the backend
+      //await Promise.all(
+        //updatedRows.map(row =>
+         // vehicleAPI.updateVehicle(row._id || row.code, row)
+        //)
+      //);
+      // Optionally, refresh data from API
+      // const vehicles = await vehicleAPI.getAllVehicles();
+      // setRowData(vehicles);
+
+      // Or update rowData locally for demo:
+      setRowData(prev =>
+        prev.map(item =>
+          updatedRows.find(u => (u._id || u.code) === (item._id || item.code)) || item
+        )
+      );
+    } catch (err) {
+      alert("فشل تحديث البيانات");
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async (rowsToDelete) => {
+    try {
+      // Uncomment for real API:
+      // await Promise.all(
+      //   rowsToDelete.map(row =>
+      //     vehicleAPI.deleteVehicle(row._id || row.code)
+      //   )
+      // );
+      // Optionally, refresh data from API
+      // const vehicles = await vehicleAPI.getAllVehicles();
+      // setRowData(vehicles);
+
+      // Or update rowData locally for demo:
+      setRowData(prev =>
+        prev.filter(item =>
+          !rowsToDelete.some(r => (r._id || r.code) === (item._id || item.code))
+        )
+      );
+    } catch (err) {
+      alert("فشل حذف البيانات");
+      console.error(err);
+    }
+  };
 
   const defaultColDef = {
     flex: 1,
@@ -88,7 +196,22 @@ const VehicleGrid = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <div style={{ margin: '10px' }}>
+      <div style={{ margin: '10px', display: 'flex', alignItems: 'center' }}>
+        <AddButton
+          onSubmit={(vehicle) => {
+            // You can later call vehicleAPI.createVehicle(vehicle) here
+            // For now, just log or update state as needed
+            console.log("New vehicle submitted:", vehicle);
+          }}
+        />
+        <UpdateButton
+          selectedRows={selectedRows}
+          onSubmit={handleUpdateSubmit}
+        />
+        <DeleteButton
+          selectedRows={selectedRows}
+          onDelete={handleDelete}
+        />
         <button 
           onClick={onExportClick}
           style={{
@@ -112,6 +235,10 @@ const VehicleGrid = () => {
           theme={myTheme}
           animateRows={true}
           onGridReady={onGridReady}
+          rowSelection="multiple"
+          suppressRowClickSelection={false}
+          suppressRowDeselection={false}
+          onSelectionChanged={onSelectionChanged}
         />
       </div>
     </div>
