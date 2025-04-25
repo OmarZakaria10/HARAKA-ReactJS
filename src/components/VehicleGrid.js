@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { vehicleAPI } from "../services/api";
 import {
@@ -10,24 +10,23 @@ import {
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const myTheme = themeQuartz.withParams({
-  backgroundColor: "#1f2836",
-  browserColorScheme: "dark",
-  chromeBackgroundColor: {
-    ref: "foregroundColor",
-    mix: 0.07,
-    onto: "backgroundColor",
-  },
-  foregroundColor: "#FFF",
-  headerFontSize: 14,
-});
-
 const VehicleGrid = () => {
+  const myTheme = themeQuartz.withParams({
+    backgroundColor: "#1f2836",
+    browserColorScheme: "dark",
+    chromeBackgroundColor: {
+      ref: "foregroundColor",
+      mix: 0.07,
+      onto: "backgroundColor",
+    },
+    foregroundColor: "#FFF",
+    headerFontSize: 14,
+  });
   const [rowData, setRowData] = useState([]);
   const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [colDefs] = useState([
-    { field: "code", headerName: "الكود" },
+    { field: "code", headerName: "الكود", rowDrag: true },
     { field: "chassis_number", headerName: "رقم الشاسية" },
     { field: "vehicle_type", headerName: "نوع المركبة" },
     { field: "vehicle_equipment", headerName: "تجهيزة المركبة" },
@@ -50,11 +49,20 @@ const VehicleGrid = () => {
   const onGridReady = (params) => {
     setGridApi(params.api);
   };
-
+  const autoSizeStrategy = useMemo(() => {
+    return {
+      type: "fitCellContents",
+    };
+  }, []);
+  const rowSelection = useMemo(() => {
+    return {
+      mode: "multiRow",
+    };
+  }, []);
   const onExportClick = useCallback(() => {
     if (gridApi) {
       const params = {
-        fileName: "vehicles_export.csv",
+        fileName: "الميري الشامل.xlsx",
         processCellCallback: (params) => {
           // Handle Arabic text properly in Excel
           return params.value ? "\uFEFF" + params.value : "";
@@ -63,6 +71,34 @@ const VehicleGrid = () => {
       gridApi.exportDataAsCsv(params);
     }
   }, [gridApi]);
+
+  const onDeleteClick = useCallback(() => {
+    if (gridApi) {
+      const selectedRows = gridApi.getSelectedRows();
+      if (selectedRows.length === 0) {
+        alert("Please select rows to delete");
+        return;
+      }
+
+      if (
+        window.confirm(
+          `Are you sure you want to delete ${selectedRows.length} rows?`
+        )
+      ) {
+        // Get all current rows
+        const currentRows = [...rowData];
+        // Get the IDs of selected rows
+        const selectedIds = selectedRows.map((row) => row.id);
+        // Filter out the selected rows
+        const updatedRows = currentRows.filter(
+          (row) => !selectedIds.includes(row.id)
+        );
+        // Update the grid with the filtered rows
+        setRowData(updatedRows);
+      }
+    }
+  }, [gridApi, rowData]);
+
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
@@ -87,21 +123,35 @@ const VehicleGrid = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <div style={{ margin: '10px' }}>
-        <button 
+    <div style={{ display: "flex", flexDirection: "column", height: "90vh" }}>
+      <div style={{ margin: "10px", display: "flex", gap: "10px" }}>
+        <button
           onClick={onExportClick}
           style={{
-            padding: '8px 16px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px'
+            padding: "8px 16px",
+            backgroundColor: "#4CAF50",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
           }}
         >
-          تصدير إلى CSV
+          Export to Excel
+        </button>
+        <button
+          onClick={onDeleteClick}
+          style={{
+            padding: "8px 16px",
+            backgroundColor: "#dc3545",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+        >
+          Delete Selected
         </button>
       </div>
       <div style={{ flex: 1, width: "100%" }}>
@@ -112,6 +162,11 @@ const VehicleGrid = () => {
           theme={myTheme}
           animateRows={true}
           onGridReady={onGridReady}
+          autoSizeStrategy={autoSizeStrategy}
+          rowSelection={rowSelection}
+          rowDragManaged={true}
+          enableCellTextSelection={true}
+
         />
       </div>
     </div>
