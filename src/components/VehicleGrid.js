@@ -10,7 +10,7 @@ import {
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const VehicleGrid = () => {
+const VehicleGrid = ({ direction = "rtl" }) => {
   const myTheme = themeQuartz.withParams({
     backgroundColor: "#1f2836",
     browserColorScheme: "dark",
@@ -123,38 +123,22 @@ const VehicleGrid = () => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "90vh" }}>
-      <div style={{ margin: "10px", display: "flex", gap: "10px" }}>
+    <div className="flex flex-col h-screen">
+      <div className="m-2.5 flex gap-2.5 ">
         <button
           onClick={onExportClick}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
         >
           Export to Excel
         </button>
         <button
           onClick={onDeleteClick}
-          style={{
-            padding: "8px 16px",
-            backgroundColor: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
+          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
         >
           Delete Selected
         </button>
       </div>
-      <div style={{ flex: 1, width: "100%" }}>
+      <div className="flex-1 w-full">
         <AgGridReact
           rowData={rowData}
           columnDefs={colDefs}
@@ -166,7 +150,7 @@ const VehicleGrid = () => {
           rowSelection={rowSelection}
           rowDragManaged={true}
           enableCellTextSelection={true}
-
+          enableRtl={direction === "rtl"}
         />
       </div>
     </div>
