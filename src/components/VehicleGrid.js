@@ -7,6 +7,8 @@ import {
   ModuleRegistry,
   themeQuartz,
 } from "ag-grid-community";
+import AddButton from "./AddButton";
+import UpdateButton from "./UpdateButton";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
@@ -63,6 +65,26 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       // enableClickSelection: true,
     };
   }, []);
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true);
+        const vehicles = await vehicleAPI.getAllVehicles();
+        setRowData(vehicles);
+      } catch (err) {
+        console.error("Failed to fetch vehicles:", err);
+        setError(
+          "Failed to load vehicles. Please check if the server is running."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
   const onExportClick = useCallback(() => {
     if (gridApi) {
       const params = {
@@ -135,25 +157,11 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     }
   }, [gridApi, rowData]);
 
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        setLoading(true);
-        const vehicles = await vehicleAPI.getAllVehicles();
-        setRowData(vehicles);
-      } catch (err) {
-        console.error("Failed to fetch vehicles:", err);
-        setError(
-          "Failed to load vehicles. Please check if the server is running."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleUpdateSubmit = async (updateVehicle) => {
 
-    fetchVehicles();
-  }, []);
+  };
 
+  
   const defaultColDef = {
     flex: 1,
     sortable: true,
@@ -198,6 +206,23 @@ const VehicleGrid = ({ direction = "rtl" }) => {
             Delete Selected
           </button>
         </div>
+        <AddButton
+          onSubmit={
+            async (vehicle) => {
+              try {
+                const response = await vehicleAPI.createVehicle(vehicle);
+                setRowData((prevRowData) => [...prevRowData, response.data]);
+              }
+              catch (err) {
+                console.error("Failed to add vehicle:", err);
+                alert("Failed to add vehicle. Please check the server.");
+              }
+            }}
+        />
+        <UpdateButton
+          //selectedRow={selectedRows[0]}
+          //onSubmit={handleUpdateSubmit}
+        />
       </div>
       <div className="flex-1 w-full p-2.5">
         <AgGridReact

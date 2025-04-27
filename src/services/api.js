@@ -11,7 +11,8 @@ export const vehicleAPI = {
   // Get all vehicles
   getAllVehicles: async () => {
     try {
-      const response = await api.get("/vehicles/getAllVehicles");
+      const response = await api.get(
+        "/vehicles/getAllVehicles");
       return response.data.data.vehicles;
     } catch (error) {
       throw error;
@@ -21,7 +22,8 @@ export const vehicleAPI = {
   // Get vehicle by ID
   getVehicleById: async (id) => {
     try {
-      const response = await api.get(`/vehicles/getVehicle/${id}`);
+      const response = await api.get(`
+        /vehicles/getVehicle/${id}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -31,7 +33,8 @@ export const vehicleAPI = {
   // Get filtered vehicles
   getFilteredVehicles: async (filters) => {
     try {
-      const response = await api.get("/vehicles/getFilteredVehicles", {
+      const response = await api.get(
+        "/vehicles/getFilteredVehicles", {
         params: filters,
       });
       return response.data;
@@ -43,7 +46,8 @@ export const vehicleAPI = {
   // Create new vehicle
   createVehicle: async (vehicleData) => {
     try {
-      const response = await api.post("/vehicles/createVehicle", vehicleData);
+      const response = await api.post(
+        "/vehicles/createVehicle", vehicleData);
       return response.data;
     } catch (error) {
       throw error;
@@ -66,7 +70,8 @@ export const vehicleAPI = {
   // Delete vehicle
   deleteVehicle: async (id) => {
     try {
-      const response = await api.delete(`/vehicles/deleteVehicle/${id}`);
+      const response = await api.delete(
+        `/vehicles/deleteVehicle/${id}`);
       return response.data;
     } catch (error) {
       throw error;
