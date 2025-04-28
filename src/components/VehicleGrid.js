@@ -1,14 +1,21 @@
 "use client";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { AgGridReact } from "ag-grid-react";
 import { vehicleAPI } from "../services/api";
+import Headers from "../services/gridHeaders";
+import Button from "../components/Button";
+import AddButton from "./AddButton";
 import {
   AllCommunityModule,
   ModuleRegistry,
   themeQuartz,
 } from "ag-grid-community";
-import AddButton from "./AddButton";
-import UpdateButton from "./UpdateButton";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
@@ -24,32 +31,14 @@ const myTheme = themeQuartz.withParams({
 });
 
 const VehicleGrid = ({ direction = "rtl" }) => {
+  // ------------------------------states------------------------------
   const [rowData, setRowData] = useState([]);
   const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [colDefs] = useState([
-    { field: "code", headerName: "الكود" },
-    { field: "chassis_number", headerName: "رقم الشاسية" },
-    { field: "vehicle_type", headerName: "نوع المركبة" },
-    { field: "vehicle_equipment", headerName: "تجهيزة المركبة" },
-    { field: "plate_number_mokhabrat", headerName: "مخابرات" },
-    { field: "plate_number_gesh", headerName: "جيش" },
-    { field: "plate_number_malaky", headerName: "ملاكي" },
-    { field: "engine_number", headerName: "رقم المحرك" },
-    { field: "color", headerName: "اللون" },
-    { field: "gps_device_number", headerName: "رقم GPS" },
-    { field: "line_number", headerName: "رقم الخط" },
-    { field: "sector", headerName: "القطاع" },
-    { field: "model_year", headerName: "الموديل" },
-    { field: "fuel_type", headerName: "نوع الوقود" },
-    { field: "administration", headerName: "الإدارة" },
-    { field: "responsible_person", headerName: "المسئول" },
-    { field: "supply_source", headerName: "جهة التوريد" },
-    { field: "notes", headerName: "الملاحظات" },
-  ]);
-
-  let selectedRows = [];
+  const [colDefs] = useState(Headers);
+  // ---------------------------callback functions-----------------------
+  let selectedRows = useRef(null);
   const onGridReady = (params) => {
     setGridApi(params.api);
   };
@@ -61,28 +50,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const rowSelection = useMemo(() => {
     return {
       mode: "multiRow",
-      // checkboxes: false,
-      // enableClickSelection: true,
     };
-  }, []);
-
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        setLoading(true);
-        const vehicles = await vehicleAPI.getAllVehicles();
-        setRowData(vehicles);
-      } catch (err) {
-        console.error("Failed to fetch vehicles:", err);
-        setError(
-          "Failed to load vehicles. Please check if the server is running."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVehicles();
   }, []);
 
   const onExportClick = useCallback(() => {
@@ -158,6 +126,25 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       );
     }
   }, [gridApi, rowData]);
+  // -----------------------------Effect------------------------------
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        setLoading(true);
+        const vehicles = await vehicleAPI.getAllVehicles();
+        setRowData(vehicles);
+      } catch (err) {
+        console.error("Failed to fetch vehicles:", err);
+        setError(
+          "Failed to load vehicles. Please check if the server is running."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
 
   const defaultColDef = {
     flex: 1,
@@ -177,31 +164,34 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     enableCellTextSelection: true,
     copyable: true,
   };
-
+  // -------------------------UI-------------------------------
   return (
-    <div className="flex flex-col h-screen h-[83vh]">
+    <div className="flex flex-col h-screen h-[80vh]">
       <div className="flex justify-between items-center  p-2.5">
         <div className="m-2.5 flex gap-2.5 ">
-          <button
+          <Button
             onClick={onExportClick}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
-          >
-            Export to Excel
-          </button>
-          <button
+            title={"Excel"}
+            className={
+              "w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
+            }
+          />
+          <Button
             onClick={onHideClick}
-            className="w-20 px-4 py-2 bg-[rgb(173,177,174)] text-white rounded hover:bg-[rgb(87,90,88)] transition-colors text-sm"
-          >
-            إخفاء
-          </button>
+            title={"إخفاء"}
+            className={
+              "w-20 px-4 py-2 bg-[rgb(173,177,174)] text-white rounded hover:bg-[rgb(87,90,88)] transition-colors text-sm"
+            }
+          />
         </div>
         <div className="m-2.5 flex gap-2.5  ">
-          <button
+          <Button
             onClick={onDeleteClick}
-            className="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-          >
-            حذف
-          </button>
+            title={"حذف"}
+            className={
+              "w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
+            }
+          />
           <AddButton
             onSubmit={async (vehicle) => {
               try {
