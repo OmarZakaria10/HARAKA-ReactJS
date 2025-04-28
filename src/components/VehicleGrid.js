@@ -133,7 +133,9 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         return;
       }
 
-      const isConfirmed = window.confirm("Are you sure you want to delete the selected items?");
+      const isConfirmed = window.confirm(
+        "Are you sure you want to delete the selected items?"
+      );
       if (!isConfirmed) {
         return;
       }
@@ -157,11 +159,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     }
   }, [gridApi, rowData]);
 
-  const handleUpdateSubmit = async (updateVehicle) => {
-
-  };
-
-  
   const defaultColDef = {
     flex: 1,
     sortable: true,
@@ -187,42 +184,36 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         <div className="m-2.5 flex gap-2.5 ">
           <button
             onClick={onExportClick}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
           >
             Export to Excel
           </button>
           <button
             onClick={onHideClick}
-            className="px-4 py-2 bg-[rgb(62,112,173)] text-white rounded hover:bg-red-700 transition-colors text-sm"
+            className="w-20 px-4 py-2 bg-[rgb(173,177,174)] text-white rounded hover:bg-[rgb(87,90,88)] transition-colors text-sm"
           >
-            Hide Selected
+            إخفاء
           </button>
         </div>
-        <div className="m-2.5 flex gap-2.5 ">
+        <div className="m-2.5 flex gap-2.5  ">
           <button
             onClick={onDeleteClick}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+            className="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
           >
-            Delete Selected
+            حذف
           </button>
-        </div>
-        <AddButton
-          onSubmit={
-            async (vehicle) => {
+          <AddButton
+            onSubmit={async (vehicle) => {
               try {
                 const response = await vehicleAPI.createVehicle(vehicle);
                 setRowData((prevRowData) => [...prevRowData, response.data]);
-              }
-              catch (err) {
+              } catch (err) {
                 console.error("Failed to add vehicle:", err);
                 alert("Failed to add vehicle. Please check the server.");
               }
             }}
-        />
-        <UpdateButton
-          //selectedRow={selectedRows[0]}
-          //onSubmit={handleUpdateSubmit}
-        />
+          />
+        </div>
       </div>
       <div className="flex-1 w-full p-2.5">
         <AgGridReact

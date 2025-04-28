@@ -22,7 +22,7 @@ const vehicleFields = [
   { name: "notes", label: "الملاحظات" },
 ];
 
-export default function AddButton({ onSubmit }) {
+export default function AddButton({ onSubmit, name }) {
   const [showForm, setShowForm] = useState(false);
 
   const handleAddClick = () => setShowForm(true);
@@ -38,17 +38,20 @@ export default function AddButton({ onSubmit }) {
         <button
           onClick={handleAddClick}
           style={{
-            padding: "8px 16px",
-            backgroundColor: "#2196F3",
-            color: "white",
+            width: "5rem", // Tailwind w-20 = 5rem
+            padding: "8px 16px", // Tailwind py-2 px-4 = 0.5rem 1rem = 8px 16px
+            backgroundColor: "#60a5fa", // Tailwind bg-blue-400
+            color: "white", // text-white
             border: "none",
-            borderRadius: "4px",
+            borderRadius: "4px", // Tailwind rounded = 4px
+            fontSize: "14px", // Tailwind text-sm = 0.875rem = 14px
             cursor: "pointer",
-            fontSize: "14px",
-            marginRight: "10px",
+            transition: "background-color 150ms ease-in-out", // Tailwind transition-colors
           }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#1d4ed8")} // hover:bg-blue-600
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#60a5fa")}
         >
-          إضافة مركبة جديدة
+          {name || "إضافة"}
         </button>
       )}
       <Form
@@ -88,17 +91,17 @@ function Form({ visible, onSubmit, onClose }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const allFieldsValid = Object.values(form).every(
-        (value) => typeof value === "string" && value.trim() !== ""
+      (value) => typeof value === "string" && value.trim() !== ""
     );
     if (allFieldsValid && onSubmit) {
-        onSubmit(form);
+      onSubmit(form);
     } else {
-        alert("Please fill out all fields with valid strings.");
+      alert("Please fill out all fields with valid strings.");
     }
-};
+  };
 
   if (!show && !visible) return null;
 
@@ -106,10 +109,11 @@ const handleSubmit = (e) => {
     <div
       style={{
         position: "fixed",
-        top: 0, left: 0, right: 0, bottom: 0,
-        background: visible
-          ? "rgba(0,0,0,0.3)"
-          : "rgba(0,0,0,0)",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: visible ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0)",
         zIndex: 1000,
         display: "flex",
         alignItems: "center",
@@ -133,9 +137,7 @@ const handleSubmit = (e) => {
           flexDirection: "column",
           alignItems: "flex-start",
           opacity: visible ? 1 : 0,
-          transform: visible
-            ? "translateY(0)"
-            : "translateY(-40px)",
+          transform: visible ? "translateY(0)" : "translateY(-40px)",
           transition: "opacity 0.3s, transform 0.3s",
           position: "relative",
         }}
