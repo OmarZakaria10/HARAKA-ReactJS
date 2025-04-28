@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.1.12:8080",
+  baseURL: "http://localhost:8080",
   headers: {
     "Content-Type": "application/json",
   },
@@ -21,7 +21,8 @@ export const vehicleAPI = {
   // Get vehicle by ID
   getVehicleById: async (id) => {
     try {
-      const response = await api.get(`/vehicles/getVehicle/${id}`);
+      const response = await api.get(`
+        /vehicles/getVehicle/${id}`);
       return response.data;
     } catch (error) {
       throw error;
