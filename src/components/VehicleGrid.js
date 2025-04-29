@@ -10,7 +10,7 @@ import { AgGridReact } from "ag-grid-react";
 import { vehicleAPI } from "../services/api";
 import Headers from "../services/gridHeaders";
 import Button from "../components/Button";
-import AddButton from "./AddButton";
+import PopUp from "./PopUp";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -37,6 +37,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
   const [colDefs] = useState(Headers);
+  const [showAddForm, setShowAddForm] = useState(false);
   // ---------------------------callback functions-----------------------
   let selectedRows = useRef(null);
   const onGridReady = (params) => {
@@ -91,7 +92,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       // Update the grid with the filtered rows
       setRowData(updatedRows);
     }
-  }, [gridApi, rowData]);
+  }, [gridApi]);
 
   const onDeleteClick = useCallback(() => {
     if (gridApi) {
@@ -100,7 +101,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         alert("Please select rows to delete");
         return;
       }
-
       const isConfirmed = window.confirm(
         "Are you sure you want to delete the selected items?"
       );
@@ -120,12 +120,12 @@ const VehicleGrid = ({ direction = "rtl" }) => {
             console.error("Failed to delete vehicle:", err);
           });
       });
-
       setRowData((prevRowData) =>
         prevRowData.filter((row) => !selectedIds.includes(row.id))
       );
     }
-  }, [gridApi, rowData]);
+  }, [gridApi]);
+
   // -----------------------------Effect------------------------------
   useEffect(() => {
     const fetchVehicles = async () => {
@@ -146,24 +146,25 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     fetchVehicles();
   }, []);
 
-  const defaultColDef = {
-    flex: 1,
-    sortable: true,
-    filter: true,
-    filterParams: {
-      buttons: ["reset", "apply"],
-      closeOnApply: true,
-    },
-    exportable: true,
-    resizable: true,
-    minWidth: 100,
-    // autoHeight: true,
-    // autoWidth: true,
-    // editable: true,
-    cellStyle: { textAlign: "right" },
-    enableCellTextSelection: true,
-    copyable: true,
-  };
+  const defaultColDef = useMemo(
+    () => ({
+      flex: 1,
+      sortable: true,
+      filter: true,
+      filterParams: {
+        buttons: ["reset", "apply"],
+        closeOnApply: true,
+      },
+      exportable: true,
+      resizable: true,
+      minWidth: 100,
+
+      cellStyle: { textAlign: "right" },
+      enableCellTextSelection: true,
+      copyable: true,
+    }),
+    []
+  );
   // -------------------------UI-------------------------------
   return (
     <div className="flex flex-col h-screen h-[80vh]">
@@ -192,17 +193,8 @@ const VehicleGrid = ({ direction = "rtl" }) => {
               "w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
             }
           />
-          <AddButton
-            onSubmit={async (vehicle) => {
-              try {
-                const response = await vehicleAPI.createVehicle(vehicle);
-                setRowData((prevRowData) => [...prevRowData, response.data]);
-              } catch (err) {
-                console.error("Failed to add vehicle:", err);
-                alert("Failed to add vehicle. Please check the server.");
-              }
-            }}
-          />
+
+          <PopUp setRowData={setRowData} />
         </div>
       </div>
       <div className="flex-1 w-full p-2.5">
