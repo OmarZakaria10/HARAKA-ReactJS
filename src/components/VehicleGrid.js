@@ -212,7 +212,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           autoSizeStrategy={autoSizeStrategy}
           onSelectionChanged={onSelectionChanged}
           paginationPageSize={50}
-          pagination={true}
+          // pagination={true}
           loadingOverlayComponent={"Loading..."}
           loadingOverlayComponentParams={{
             loadingMessage: "جاري التحميل...",
