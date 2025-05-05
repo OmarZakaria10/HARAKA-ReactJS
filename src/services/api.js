@@ -73,6 +73,17 @@ export const vehicleAPI = {
       throw error;
     }
   },
+
+  getUniqueFieldValues: async () => {
+    try {
+      const response = await api.get(
+        `/vehicles/getUniqueFieldValues/?fields=sector,administration,vehicle_type,vehicle_equipment,color,fuel_type,responsible_person,supply_source,insurance_status`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default api;

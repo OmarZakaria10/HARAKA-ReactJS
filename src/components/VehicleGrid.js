@@ -17,6 +17,7 @@ import {
   themeQuartz,
 } from "ag-grid-community";
 
+import VehicleForm from "./VehicleForm";
 ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
   backgroundColor: "#1f2836",
@@ -38,8 +39,10 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [loading, setLoading] = useState(true);
   const [colDefs] = useState(Headers);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   // ---------------------------callback functions-----------------------
   let selectedRows = useRef(null);
+  const firstInputRef = useRef(null);
   const onGridReady = (params) => {
     setGridApi(params.api);
   };
@@ -193,8 +196,19 @@ const VehicleGrid = ({ direction = "rtl" }) => {
               "w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
             }
           />
-
-          <PopUp setRowData={setRowData} />
+          <PopUp
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            firstInputRef={firstInputRef}
+          >
+            <VehicleForm
+              setRowData={setRowData}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              title={"إضافة مركبة"}
+              firstInputRef={firstInputRef}
+            />
+          </PopUp>
         </div>
       </div>
       <div className="flex-1 w-full p-2.5">
