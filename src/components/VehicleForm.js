@@ -1,5 +1,5 @@
 import { Button, Label, TextInput } from "flowbite-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Headers from "../services/gridHeaders";
 import { vehicleAPI } from "../services/api";
 
@@ -7,9 +7,21 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
   const [formData, setFormData] = useState(
     Object.fromEntries(Headers.map((header) => [header.field, ""]))
   );
+  const [uniqueValues, setUniqueValues] = useState({});
 
   const requiredFields = ["code", "chassis_number", "vehicle_type"];
   const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    async function getUniqueValues() {
+      try {
+        const response = await vehicleAPI.getUniqueFieldValues();
+        setUniqueValues(response.data);
+      } catch (err) {
+        console.log("Failed to fetch unique values");
+      }
+    }
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -64,8 +76,8 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
                 )}
               </Label>
             </div>
-            <TextInput
-              className="text-right"
+            <input
+              className="w-full text-right rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
               dir="rtl"
               id={header.field}
               ref={index === 0 ? firstInputRef : null}
@@ -73,7 +85,17 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
               onChange={(e) => handleChange(header.field, e.target.value)}
               placeholder={header.headerName}
               required={requiredFields.includes(header.field)}
+              list={`${header.field}-list`}
+              autoComplete="on"
+              // autoFocus={index === 0}
             />
+            {uniqueValues[header.field] && (
+              <datalist id={`${header.field}-list`}>
+                {uniqueValues[header.field].map((value, i) => (
+                  <option key={i} value={value} />
+                ))}
+              </datalist>
+            )}
           </div>
         ))}
       </div>
