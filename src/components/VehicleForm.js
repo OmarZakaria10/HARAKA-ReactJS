@@ -21,6 +21,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
         console.log("Failed to fetch unique values");
       }
     }
+    getUniqueValues();
   });
 
   const handleSubmit = (e) => {
@@ -87,7 +88,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
               required={requiredFields.includes(header.field)}
               list={`${header.field}-list`}
               autoComplete="on"
-              // autoFocus={index === 0}
+              autoFocus={index === 0}
             />
             {uniqueValues[header.field] && (
               <datalist id={`${header.field}-list`}>
