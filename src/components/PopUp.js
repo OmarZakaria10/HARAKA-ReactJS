@@ -1,30 +1,31 @@
 import { Button } from "flowbite-react";
 import { useRef, useState } from "react";
 import CustomModal from "./CustomModal";
-import VehicleForm from "./VehicleForm";
+import AddVehicleForm from "./AddVehicleForm";
 
-export default function PopUp({ setRowData }) {
-  const [openModal, setOpenModal] = useState(false);
+export default function PopUp({
+  children,
+  title,
+  buttonTitle,
+  AddModal,
+  setAddModal,
+}) {
   const firstInputRef = useRef(null);
-
-  const handleSubmitSuccess = (newVehicle) => {
-    setRowData((prevRowData) => [...prevRowData, newVehicle]);
-    setOpenModal(false);
-  };
 
   return (
     <>
-      <Button onClick={() => setOpenModal(true)}>إضافة</Button>
+      <Button onClick={() => setAddModal(true)}>{buttonTitle}</Button>
       <CustomModal
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
+        isOpen={AddModal}
+        onClose={() => setAddModal(false)}
         initialFocus={firstInputRef}
-        title="إضافة مركبة جديدة"
+        title={title}
       >
-        <VehicleForm
+        {/* <AddVehicleForm
           onSubmitSuccess={handleSubmitSuccess}
           onCancel={() => setOpenModal(false)}
-        />
+        /> */}
+        {children}
       </CustomModal>
     </>
   );

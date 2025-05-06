@@ -5,10 +5,13 @@ import React, {
   useCallback,
   useMemo,
   useRef,
+  Children,
 } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { vehicleAPI } from "../services/api";
 import Headers from "../services/gridHeaders";
+import AddVehicleForm from "./AddVehicleForm";
+import UpdateVehicleForm from "./UpdateVehicleForm";
 import Button from "../components/Button";
 import PopUp from "./PopUp";
 import {
@@ -37,9 +40,11 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
   const [colDefs] = useState(Headers);
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [AddModal, setAddModal] = useState(false);
+  const [UpdateModal, setUpdateModal] = useState(false);
+  const [selectedVehicles, setSelectedVehicles] = useState(null);
   // ---------------------------callback functions-----------------------
-  let selectedRows = useRef(null);
+  const updateGridRef = useRef(0);
   const onGridReady = (params) => {
     setGridApi(params.api);
   };
@@ -69,14 +74,14 @@ const VehicleGrid = ({ direction = "rtl" }) => {
 
   const onSelectionChanged = useCallback(() => {
     if (gridApi) {
-      selectedRows = gridApi.getSelectedRows();
-      console.log("Selected Rows:", selectedRows);
+      setSelectedVehicles(gridApi.getSelectedRows());
+      console.log("Selected Rows:", selectedVehicles);
     }
   }, [gridApi]);
 
   const onHideClick = useCallback(() => {
     if (gridApi) {
-      selectedRows = gridApi.getSelectedRows();
+      let selectedRows = gridApi.getSelectedRows();
       if (selectedRows.length === 0) {
         alert("Please select rows to delete");
         return;
@@ -96,7 +101,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
 
   const onDeleteClick = useCallback(() => {
     if (gridApi) {
-      selectedRows = gridApi.getSelectedRows();
+      let selectedRows = gridApi.getSelectedRows();
       if (selectedRows.length === 0) {
         alert("Please select rows to delete");
         return;
@@ -144,7 +149,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     };
 
     fetchVehicles();
-  }, []);
+  }, [updateGridRef.current]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -165,6 +170,17 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     }),
     []
   );
+
+  const handleAddSuccess = (newVehicle) => {
+    setRowData((prevRowData) => [...prevRowData, newVehicle]);
+    setAddModal(false);
+    updateGridRef.current += 1;
+  };
+  const handleUpdateSuccess = (newVehicle) => {
+    setRowData((prevRowData) => [...prevRowData, newVehicle]);
+    setUpdateModal(false);
+    updateGridRef.current += 1;
+  };
   // -------------------------UI-------------------------------
   return (
     <div className="flex flex-col h-screen h-[80vh]">
@@ -193,8 +209,36 @@ const VehicleGrid = ({ direction = "rtl" }) => {
               "w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
             }
           />
-
-          <PopUp setRowData={setRowData} />
+          {
+            <PopUp
+              AddModal={UpdateModal}
+              setAddModal={setUpdateModal}
+              title={"تعديل عربة جديدة"}
+              buttonTitle={"تعديل"}
+            >
+              {" "}
+              {selectedVehicles && selectedVehicles.length == 1 && (
+                <UpdateVehicleForm
+                  vehicle={selectedVehicles[0]}
+                  onSubmitSuccess={handleUpdateSuccess}
+                  onCancel={() => setUpdateModal(false)}
+                />
+              )}
+            </PopUp>
+          }
+          <PopUp
+            AddModal={AddModal}
+            setAddModal={setAddModal}
+            title={" إضافة عربة جديدة"}
+            buttonTitle={"إضافة"}
+          >
+            {
+              <AddVehicleForm
+                onSubmitSuccess={handleAddSuccess}
+                onCancel={() => setAddModal(false)}
+              />
+            }
+          </PopUp>
         </div>
       </div>
       <div className="flex-1 w-full p-2.5">
@@ -212,7 +256,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           autoSizeStrategy={autoSizeStrategy}
           onSelectionChanged={onSelectionChanged}
           paginationPageSize={50}
-          // pagination={true}
+          pagination={true}
           loadingOverlayComponent={"Loading..."}
           loadingOverlayComponentParams={{
             loadingMessage: "جاري التحميل...",
