@@ -8,8 +8,8 @@ import React, {
   Children,
 } from "react";
 import { AgGridReact } from "ag-grid-react";
-import { vehicleAPI } from "../services/api";
-import Headers from "../services/gridHeaders";
+import { endPoints } from "../services/endPoints";
+import Headers from "../services/vehicleHeaders";
 import AddVehicleForm from "./AddVehicleForm";
 import UpdateVehicleForm from "./UpdateVehicleForm";
 import Button from "../components/Button";
@@ -62,7 +62,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const onExportClick = useCallback(() => {
     if (gridApi) {
       const params = {
-        fileName: "الميري الشامل.xlsx",
+        fileName: "الميري الشامل.csv",
         processCellCallback: (params) => {
           // Handle Arabic text properly in Excel
           return params.value ? "\uFEFF" + params.value : "";
@@ -118,7 +118,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       // Call the API to delete the selected vehicles
 
       selectedIds.forEach((element) => {
-        vehicleAPI
+        endPoints
           .deleteVehicle(element)
           .then(console.log(`${element} deleted`))
           .catch((err) => {
@@ -136,7 +136,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     const fetchVehicles = async () => {
       try {
         setLoading(true);
-        const vehicles = await vehicleAPI.getAllVehicles();
+        const vehicles = await endPoints.getAllVehicles();
         setRowData(vehicles);
       } catch (err) {
         console.error("Failed to fetch vehicles:", err);
@@ -256,7 +256,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           autoSizeStrategy={autoSizeStrategy}
           onSelectionChanged={onSelectionChanged}
           paginationPageSize={50}
-          pagination={true}
+          // pagination={true}
           loadingOverlayComponent={"Loading..."}
           loadingOverlayComponentParams={{
             loadingMessage: "جاري التحميل...",

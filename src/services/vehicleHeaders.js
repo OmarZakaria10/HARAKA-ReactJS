@@ -1,5 +1,5 @@
-let Headers = [
-  { field: "code", headerName: "الكود" , },
+const Headers = [
+  { field: "code", headerName: "الكود" },
   { field: "chassis_number", headerName: "رقم الشاسية" },
   { field: "vehicle_type", headerName: "نوع المركبة" },
   { field: "vehicle_equipment", headerName: "تجهيزة المركبة" },

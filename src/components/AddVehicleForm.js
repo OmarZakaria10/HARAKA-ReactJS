@@ -1,7 +1,7 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import Headers from "../services/gridHeaders";
-import { vehicleAPI } from "../services/api";
+import Headers from "../services/vehicleHeaders";
+import { endPoints } from "../services/endPoints";
 
 export default function VehicleForm({ onSubmitSuccess, onCancel }) {
   const [formData, setFormData] = useState(
@@ -15,7 +15,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
   useEffect(() => {
     async function getUniqueValues() {
       try {
-        const response = await vehicleAPI.getUniqueFieldValues();
+        const response = await endPoints.getUniqueFieldValues();
         setUniqueValues(response.data);
       } catch (err) {
         console.log("Failed to fetch unique values");
@@ -48,7 +48,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
 
   const handleAddVehicle = async (vehicleData) => {
     try {
-      const response = await vehicleAPI.createVehicle(vehicleData);
+      const response = await endPoints.createVehicle(vehicleData);
       onSubmitSuccess(response.data);
       alert("تمت إضافة المركبة بنجاح");
     } catch (err) {
