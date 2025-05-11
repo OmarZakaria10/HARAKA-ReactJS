@@ -18,10 +18,7 @@ function App() {
         paragraph={"جهاز مستقبل مصر"}
       />
       {window === "vehicles" && <VehicleGrid />}
-
       {window === "licenses" && <LicensesGrid />}
-
-      <div className={window === "Comprehensive" ? "" : "hidden"}></div>
     </div>
   );
 }

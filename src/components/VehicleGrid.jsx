@@ -5,14 +5,14 @@ import React, {
   useCallback,
   useMemo,
   useRef,
-  Children,
 } from "react";
+import AssociatedLicenseForm from "./AssociatedLicenseForm";
 import { AgGridReact } from "ag-grid-react";
 import { endPoints } from "../services/endPoints";
 import Headers from "../services/vehicleHeaders";
 import AddVehicleForm from "./AddVehicleForm";
 import UpdateVehicleForm from "./UpdateVehicleForm";
-import Button from "../components/Button";
+import Button from "./Button";
 import PopUp from "./PopUp";
 import {
   AllCommunityModule,
@@ -42,11 +42,13 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [colDefs] = useState(Headers);
   const [AddModal, setAddModal] = useState(false);
   const [UpdateModal, setUpdateModal] = useState(false);
-  const [selectedVehicles, setSelectedVehicles] = useState(null);
+  const [showLicensesModal, setShowLicensesModal] = useState(false);
+  const [selectedVehicles, setSelectedVehicles] = useState([]);
   // ---------------------------callback functions-----------------------
   const updateGridRef = useRef(0);
   const onGridReady = (params) => {
     setGridApi(params.api);
+    params.api.sizeColumnsToFit();
   };
   const autoSizeStrategy = useMemo(() => {
     return {
@@ -72,12 +74,12 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     }
   }, [gridApi]);
 
-  const onSelectionChanged = useCallback(() => {
+  const onSelectionChanged = () => {
     if (gridApi) {
-      setSelectedVehicles(gridApi.getSelectedRows());
-      console.log("Selected Rows:", selectedVehicles);
+      const selected = gridApi.getSelectedRows();
+      setSelectedVehicles(selected);
     }
-  }, [gridApi]);
+  };
 
   const onHideClick = useCallback(() => {
     if (gridApi) {
@@ -209,6 +211,20 @@ const VehicleGrid = ({ direction = "rtl" }) => {
               "w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
             }
           />
+          <PopUp
+            AddModal={showLicensesModal}
+            setAddModal={setShowLicensesModal}
+            title={"الرخص المرتبطة"}
+            buttonTitle={"عرض الرخص"}
+          >
+            {selectedVehicles && selectedVehicles.length === 1 ? (
+              <AssociatedLicenseForm vehicle={selectedVehicles[0]} />
+            ) : (
+              <div className="text-center">
+                الرجاء اختيار مركبة واحدة لعرض رخصها
+              </div>
+            )}
+          </PopUp>
           {
             <PopUp
               AddModal={UpdateModal}
@@ -255,12 +271,8 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           enableCellTextSelection={true}
           autoSizeStrategy={autoSizeStrategy}
           onSelectionChanged={onSelectionChanged}
-          paginationPageSize={50}
-          // pagination={true}
-          loadingOverlayComponent={"Loading..."}
-          loadingOverlayComponentParams={{
-            loadingMessage: "جاري التحميل...",
-          }}
+          paginationPageSize={500}
+          pagination={true}
           overlayLoadingTemplate={
             '<span class="ag-overlay-loading-center">جاري التحميل...</span>'
           }

@@ -14,6 +14,7 @@ const Headers = [
   { field: "model_year", headerName: "الموديل" },
   { field: "fuel_type", headerName: "نوع الوقود" },
   { field: "administration", headerName: "الإدارة" },
+  { field: "insurance_status", headerName: "حالة التأمين" },
   { field: "responsible_person", headerName: "المسئول" },
   { field: "supply_source", headerName: "جهة التوريد" },
   { field: "notes", headerName: "الملاحظات" },

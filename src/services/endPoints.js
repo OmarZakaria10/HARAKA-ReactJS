@@ -5,7 +5,7 @@ class Axios {
 
   constructor() {
     this.api = axios.create({
-      baseURL: "http://192.168.8.56:8080",
+      baseURL: "http://localhost:8080",
       headers: {
         "Content-Type": "application/json",
       },
@@ -176,6 +176,16 @@ class Axios {
     try {
       const response = await this.api.get("/licenses/getExpiringLicenses");
       return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getLicenseByVehicleId(id) {
+    try {
+      const response = await this.api.get(
+        `/licenses/getLicenseByVehicleId/${id}`
+      );
+      return response.data.data;
     } catch (error) {
       throw error;
     }

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { endPoints } from "../services/endPoints";
-import Button from "../components/Button";
+import Button from "./Button";
 import licensesHeaders from "../services/licensesHeaders";
 import PopUp from "./PopUp";
 import {
@@ -149,7 +149,7 @@ const LicensesGrid = ({ direction = "rtl" }) => {
 
   // -------------------------UI-------------------------------
   return (
-    <div className="flex flex-col h-screen h-[80vh]">
+    <div className="flex flex-col h-screen ">
       <div className="flex justify-between items-center p-2.5">
         <div className="m-2.5 flex gap-2.5">
           <Button
@@ -164,7 +164,9 @@ const LicensesGrid = ({ direction = "rtl" }) => {
             title={"حذف"}
             className="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
           />
-          {/* Add your PopUp components for Add/Update forms here */}
+          {
+
+          }
         </div>
       </div>
       <div className="flex-1 w-full p-2.5">
@@ -181,8 +183,8 @@ const LicensesGrid = ({ direction = "rtl" }) => {
           enableCellTextSelection={true}
           autoSizeStrategy={autoSizeStrategy}
           onSelectionChanged={onSelectionChanged}
-          paginationPageSize={50}
-          // pagination={true}
+          paginationPageSize={500}
+          pagination={true}
           overlayLoadingTemplate={
             '<span class="ag-overlay-loading-center">جاري التحميل...</span>'
           }
