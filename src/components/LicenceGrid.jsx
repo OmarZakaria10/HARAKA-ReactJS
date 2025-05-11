@@ -6,10 +6,12 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import AssociatedDataForm from "./AssociatedDataForm";
 import { AgGridReact } from "ag-grid-react";
 import { endPoints } from "../services/endPoints";
 import Button from "./Button";
 import licensesHeaders from "../services/licensesHeaders";
+import vehicleHeaders from "../services/vehicleHeaders";
 import PopUp from "./PopUp";
 import {
   AllCommunityModule,
@@ -36,6 +38,7 @@ const LicensesGrid = ({ direction = "rtl" }) => {
   const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showVehiclesModal, setShowVehiclesModal] = useState(false);
   // const [AddModal, setAddModal] = useState(false);
   // const [UpdateModal, setUpdateModal] = useState(false);
   const [selectedLicenses, setSelectedLicenses] = useState(null);
@@ -164,6 +167,20 @@ const LicensesGrid = ({ direction = "rtl" }) => {
             title={"حذف"}
             className="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
           />
+          <PopUp
+            AddModal={showVehiclesModal}
+            setAddModal={setShowVehiclesModal}
+            title={"معلومات المركبة"}
+            buttonTitle={"عرض المركبة"}
+          >
+            {selectedLicenses && selectedLicenses.length === 1 ? (
+              <AssociatedDataForm license={selectedLicenses[0]} headers={vehicleHeaders}  />
+            ) : (
+              <div className="text-xl text-center font-medium text-blue-200">
+                الرجاء اختيار رخصة واحدة لعرض مركبتها
+              </div>
+            )}
+          </PopUp>
           {
 
           }

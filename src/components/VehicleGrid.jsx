@@ -6,10 +6,11 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import AssociatedLicenseForm from "./AssociatedLicenseForm";
+import AssociatedDataForm from "./AssociatedDataForm";
 import { AgGridReact } from "ag-grid-react";
 import { endPoints } from "../services/endPoints";
-import Headers from "../services/vehicleHeaders";
+import vehicleHeaders from "../services/vehicleHeaders";
+import licenseHeaders from "../services/licensesHeaders";
 import AddVehicleForm from "./AddVehicleForm";
 import UpdateVehicleForm from "./UpdateVehicleForm";
 import Button from "./Button";
@@ -39,7 +40,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [colDefs] = useState(Headers);
+  const [colDefs] = useState(vehicleHeaders);
   const [AddModal, setAddModal] = useState(false);
   const [UpdateModal, setUpdateModal] = useState(false);
   const [showLicensesModal, setShowLicensesModal] = useState(false);
@@ -214,13 +215,13 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           <PopUp
             AddModal={showLicensesModal}
             setAddModal={setShowLicensesModal}
-            title={"الرخص المرتبطة"}
+            title={"معلومات الرخصة"}
             buttonTitle={"عرض الرخص"}
           >
             {selectedVehicles && selectedVehicles.length === 1 ? (
-              <AssociatedLicenseForm vehicle={selectedVehicles[0]} />
+              <AssociatedDataForm vehicle={selectedVehicles[0]} headers={licenseHeaders} />
             ) : (
-              <div className="text-center">
+              <div className="text-xl text-center text-blue-200">
                 الرجاء اختيار مركبة واحدة لعرض رخصها
               </div>
             )}
