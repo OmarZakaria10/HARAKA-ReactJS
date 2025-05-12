@@ -12,6 +12,8 @@ import { endPoints } from "../services/endPoints";
 import Button from "./Button";
 import licensesHeaders from "../services/licensesHeaders";
 import vehicleHeaders from "../services/vehicleHeaders";
+import AddLicenseForm from "./AddLicenseForm";
+import UpdateLicenseForm from "./UpdateLicenseForm";
 import PopUp from "./PopUp";
 import {
   AllCommunityModule,
@@ -39,8 +41,8 @@ const LicensesGrid = ({ direction = "rtl" }) => {
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showVehiclesModal, setShowVehiclesModal] = useState(false);
-  // const [AddModal, setAddModal] = useState(false);
-  // const [UpdateModal, setUpdateModal] = useState(false);
+  const [AddModal, setAddModal] = useState(false);
+  const [UpdateModal, setUpdateModal] = useState(false);
   const [selectedLicenses, setSelectedLicenses] = useState(null);
 
   // Define column headers for licenses
@@ -109,6 +111,18 @@ const LicensesGrid = ({ direction = "rtl" }) => {
       );
     }
   }, [gridApi]);
+  // Add these handler functions
+  const handleAddSuccess = (newLicense) => {
+    setRowData((prevRowData) => [...prevRowData, newLicense]);
+    setAddModal(false);
+    updateGridRef.current += 1;
+  };
+
+  const handleUpdateSuccess = (updatedLicense) => {
+    setRowData((prevRowData) => [...prevRowData, updatedLicense]);
+    setUpdateModal(false);
+    updateGridRef.current += 1;
+  };
 
   // -----------------------------Effect------------------------------
   useEffect(() => {
@@ -174,16 +188,41 @@ const LicensesGrid = ({ direction = "rtl" }) => {
             buttonTitle={"عرض المركبة"}
           >
             {selectedLicenses && selectedLicenses.length === 1 ? (
-              <AssociatedDataForm license={selectedLicenses[0]} headers={vehicleHeaders}  />
+              <AssociatedDataForm
+                license={selectedLicenses[0]}
+                headers={vehicleHeaders}
+              />
             ) : (
               <div className="text-xl text-center font-medium text-blue-200">
                 الرجاء اختيار رخصة واحدة لعرض مركبتها
               </div>
             )}
           </PopUp>
-          {
-
-          }
+          <PopUp
+            AddModal={UpdateModal}
+            setAddModal={setUpdateModal}
+            title={"تعديل رخصة"}
+            buttonTitle={"تعديل"}
+          >
+            {selectedLicenses && selectedLicenses.length === 1 && (
+              <UpdateLicenseForm
+                license={selectedLicenses[0]}
+                onSubmitSuccess={handleUpdateSuccess}
+                onCancel={() => setUpdateModal(false)}
+              />
+            )}
+          </PopUp>
+          <PopUp
+            AddModal={AddModal}
+            setAddModal={setAddModal}
+            title={"إضافة رخصة جديدة"}
+            buttonTitle={"إضافة"}
+          >
+            <AddLicenseForm
+              onSubmitSuccess={handleAddSuccess}
+              onCancel={() => setAddModal(false)}
+            />
+          </PopUp>
         </div>
       </div>
       <div className="flex-1 w-full p-2.5">

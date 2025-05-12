@@ -163,7 +163,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         buttons: ["reset", "apply"],
         closeOnApply: true,
       },
-      exportable: true,
+      // exportable: true,
       resizable: true,
       minWidth: 100,
 
@@ -219,7 +219,10 @@ const VehicleGrid = ({ direction = "rtl" }) => {
             buttonTitle={"عرض الرخص"}
           >
             {selectedVehicles && selectedVehicles.length === 1 ? (
-              <AssociatedDataForm vehicle={selectedVehicles[0]} headers={licenseHeaders} />
+              <AssociatedDataForm
+                vehicle={selectedVehicles[0]}
+                headers={licenseHeaders}
+              />
             ) : (
               <div className="text-xl text-center text-blue-200">
                 الرجاء اختيار مركبة واحدة لعرض رخصها
