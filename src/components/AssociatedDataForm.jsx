@@ -4,7 +4,6 @@ import { endPoints } from "../services/endPoints";
 //import LicenseHeaders from "../services/licensesHeaders";
 //import VehicleHeaders from "../services/vehicleHeaders";
 
-
 export default function AssociatedLicenseForm({ vehicle, license, headers }) {
   const [associatedData, setAssociatedData] = useState(null);
   const [dataType, setDataType] = useState(null);
@@ -19,11 +18,13 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
         if (vehicle) {
           const response = await endPoints.getLicenseByVehicleId(vehicle.id);
           setAssociatedData(response);
-          setDataType('license');
+          setDataType("license");
         } else if (license) {
-          const response = await endPoints.getVehicleById(license.vehicle_id);
-          setAssociatedData(response);
-          setDataType('vehicle');
+          console.log(license.vehicleId);
+          const response = await endPoints.getVehicleById(license.vehicleId);
+          console.log(response.data);
+          setAssociatedData(response.data.vehicle);
+          setDataType("vehicle");
         }
       } catch (err) {
         console.error("Failed to fetch associated data:", err);
@@ -38,15 +39,27 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
   }, [vehicle, license]);
 
   if (loading) {
-    return <div className="text-xl text-center font-medium text-blue-200">جاري التحميل...</div>;
+    return (
+      <div className="text-xl text-center font-medium text-blue-200">
+        جاري التحميل...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-xl text-center font-medium text-red-400">{error}</div>;
+    return (
+      <div className="text-xl text-center font-medium text-red-400">
+        {error}
+      </div>
+    );
   }
 
   if (!associatedData) {
-    return <div className="text-xl text-center font-medium text-blue-200">لا توجد رخصة مرتبطة بهذه المركبة</div>;
+    return (
+      <div className="text-xl text-center font-medium text-blue-200">
+        لا توجد رخصة مرتبطة بهذه المركبة
+      </div>
+    );
   }
 
   return (
@@ -71,6 +84,6 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
           ))}
         </div>
       </div>
-    </div>   
+    </div>
   );
 }
