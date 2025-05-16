@@ -22,7 +22,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
       }
     }
     getUniqueValues();
-  });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

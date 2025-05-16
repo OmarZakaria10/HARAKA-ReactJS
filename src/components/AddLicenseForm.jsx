@@ -7,9 +7,21 @@ export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
   const [formData, setFormData] = useState(
     Object.fromEntries(LicenseHeaders.map((header) => [header.field, ""]))
   );
-  
+  const [uniqueValues, setUniqueValues] = useState({});
   const requiredFields = ["serial_number", "plate_number", "license_type"];
   const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    async function getUniqueValues() {
+      try {
+        const response = await endPoints.getLicenseUniqueFieldValues();
+        setUniqueValues(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getUniqueValues();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -73,9 +85,17 @@ export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
               onChange={(e) => handleChange(header.field, e.target.value)}
               placeholder={header.headerName}
               required={requiredFields.includes(header.field)}
+              list={`${header.field}-list`}
               autoComplete="on"
               autoFocus={index === 0}
             />
+            {uniqueValues[header.field] && (
+              <datalist id={`${header.field}-list`}>
+                {uniqueValues[header.field].map((value, i) => (
+                  <option key={i} value={value} />
+                ))}
+              </datalist>
+            )}
           </div>
         ))}
       </div>

@@ -165,7 +165,9 @@ class Axios {
 
   async getLicenseUniqueFieldValues() {
     try {
-      const response = await this.api.get("/licenses/getUniqueFieldValues");
+      const response = await this.api.get(
+        `/licenses/getUniqueFieldValues/?fields=license_type,vehicle_type,recipient,notes`
+      );
       return response.data;
     } catch (error) {
       throw error;
