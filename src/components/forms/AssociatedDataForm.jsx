@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Label } from "flowbite-react";
-import { endPoints } from "../services/endPoints";
+import { endPoints } from "../../services/endPoints";
 //import LicenseHeaders from "../services/licensesHeaders";
 //import VehicleHeaders from "../services/vehicleHeaders";
 

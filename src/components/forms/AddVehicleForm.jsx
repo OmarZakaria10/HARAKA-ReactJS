@@ -1,19 +1,17 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import Headers from "../services/vehicleHeaders";
-import { endPoints } from "../services/endPoints";
+import Headers from "../../services/vehicleHeaders";
+import { endPoints } from "../../services/endPoints";
 
-export default function UpdateVehicleForm({
-  vehicle,
-  onSubmitSuccess,
-  onCancel,
-}) {
-  const [formData, setFormData] = useState(vehicle || {});
+export default function VehicleForm({ onSubmitSuccess, onCancel }) {
+  const [formData, setFormData] = useState(
+    Object.fromEntries(Headers.map((header) => [header.field, ""]))
+  );
   const [uniqueValues, setUniqueValues] = useState({});
 
   const requiredFields = ["code", "chassis_number", "vehicle_type"];
   const firstInputRef = useRef(null);
-  console.log(vehicle);
+
   useEffect(() => {
     async function getUniqueValues() {
       try {
@@ -41,21 +39,21 @@ export default function UpdateVehicleForm({
     const processedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
-        value?.trim?.() || value || null,
+        value.trim() === "" ? null : value.trim(),
       ])
     );
 
-    handleUpdateVehicle(processedData);
+    handleAddVehicle(processedData);
   };
 
-  const handleUpdateVehicle = async (vehicleData) => {
+  const handleAddVehicle = async (vehicleData) => {
     try {
-      const response = await endPoints.updateVehicle(vehicle.id, vehicleData);
+      const response = await endPoints.createVehicle(vehicleData);
       onSubmitSuccess(response.data);
-      alert("تم تعديل المركبة بنجاح");
+      alert("تمت إضافة المركبة بنجاح");
     } catch (err) {
-      console.error("Failed to update vehicle:", err);
-      alert("فشل في تعديل المركبة");
+      console.error("Failed to add vehicle:", err);
+      alert("فشل في إضافة المركبة");
     }
   };
 
@@ -84,12 +82,13 @@ export default function UpdateVehicleForm({
               dir="rtl"
               id={header.field}
               ref={index === 0 ? firstInputRef : null}
-              value={formData[header.field] || ""}
+              value={formData[header.field]}
               onChange={(e) => handleChange(header.field, e.target.value)}
               placeholder={header.headerName}
               required={requiredFields.includes(header.field)}
               list={`${header.field}-list`}
               autoComplete="on"
+              autoFocus={index === 0}
             />
             {uniqueValues[header.field] && (
               <datalist id={`${header.field}-list`}>
@@ -106,7 +105,7 @@ export default function UpdateVehicleForm({
           إلغاء
         </Button>
         <Button type="submit" color="blue">
-          تعديل مركبة
+          إضافة مركبة
         </Button>
       </div>
     </form>
