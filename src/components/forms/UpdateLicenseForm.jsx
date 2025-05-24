@@ -1,7 +1,7 @@
 import { Button, Label } from "flowbite-react";
 import { useRef, useState } from "react";
-import LicenseHeaders from "../services/licensesHeaders";
-import { endPoints } from "../services/endPoints";
+import LicenseHeaders from "../../services/licensesHeaders";
+import { endPoints } from "../../services/endPoints";
 
 export default function UpdateLicenseForm({
   license,

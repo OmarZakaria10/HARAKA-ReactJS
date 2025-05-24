@@ -1,7 +1,7 @@
 import { Button } from "flowbite-react";
 import { useRef, useState } from "react";
 import CustomModal from "./CustomModal";
-import AddVehicleForm from "./AddVehicleForm";
+import AddVehicleForm from "./forms/AddVehicleForm";
 
 export default function PopUp({
   children,

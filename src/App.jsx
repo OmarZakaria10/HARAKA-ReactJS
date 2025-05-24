@@ -1,9 +1,9 @@
 import "./App.css";
 import React, { useState } from "react";
-import VehicleGrid from "./components/VehicleGrid";
+import VehicleGrid from "./components/grids/VehicleGrid";
 import Navbar from "./components/Navbar";
 import Heading from "./components/Heading";
-import LicensesGrid from "./components/LicenceGrid";
+import LicensesGrid from "./components/grids/LicenceGrid";
 
 function App() {
   const [window, setWindow] = useState("vehicles");
