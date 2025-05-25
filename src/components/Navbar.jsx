@@ -8,66 +8,80 @@ export default function Navbar({ name, onSetWindow }) {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const menuItems = [
+    { id: "expired", label: "الرخص المنتهية" },
+    { id: "licenses", label: "كشف الرخص" },
+    { id: "vehicles", label: "كشف الميري الشامل" },
+  ];
+
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-white border-gray-200 dark:bg-gray-900 shadow-md">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo and Brand Name */}
-        <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src={logo} className="h-10" alt="Logo" />
-          <span className="self-center text-lg font-semibold whitespace-nowrap dark:text-white">
+        <a
+          href="/"
+          className="flex items-center gap-3 rtl:flex-row-reverse"
+          aria-label="Home"
+        >
+          <img src={logo} className="h-12 w-auto" alt="Logo" />
+          <h1 className="text-lg font-semibold whitespace-nowrap dark:text-white">
             {name}
-          </span>
+          </h1>
         </a>
 
+        {/* Mobile Menu Button */}
         <button
           onClick={toggleMenu}
           type="button"
-          className="flex flex-row items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-          aria-controls="navbar-default"
+          className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          aria-controls="navbar-menu"
           aria-expanded={isMenuOpen}
         >
-          <span className="sr-only">Open main menu</span>
+          <span className="sr-only">Toggle navigation menu</span>
           <svg
-            className="w-5 h-5"
+            className="w-6 h-6"
             aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            viewBox="0 0 17 14"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
             <path
-              stroke="currentColor"
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 1h15M1 7h15M1 13h15"
+              strokeWidth={2}
+              d={
+                isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"
+              }
             />
           </svg>
         </button>
 
+        {/* Navigation Menu */}
         <div
           className={`${
             isMenuOpen ? "block" : "hidden"
-          } w-full md:block md:w-auto`}
-          id="navbar-default"
+          } w-full md:block md:w-auto transition-all duration-200 ease-in-out`}
+          id="navbar-menu"
         >
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse  md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-8">
+          <nav className="flex flex-col gap-2 p-4 mt-4 md:p-0 md:mt-0 md:flex-row md:gap-8 rtl:space-x-reverse">
+            {menuItems.map((item) => (
               <button
-                className="w-full py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                aria-current="page"
-                onClick={() => onSetWindow("licenses")}
+                key={item.id}
+                onClick={() => {
+                  onSetWindow(item.id);
+                  setIsMenuOpen(false); // Close menu after selection on mobile
+                }}
+                className="px-4 py-2 text-center rounded-lg transition-colors duration-200
+                  md:px-0 md:py-0 md:bg-transparent
+                  text-gray-900 hover:bg-gray-100 
+                  dark:text-white dark:hover:bg-gray-700 
+                  md:dark:hover:bg-transparent md:dark:hover:text-blue-500
+                  md:hover:bg-transparent md:hover:text-blue-700"
               >
-                كشف الرخص
+                {item.label}
               </button>
-              <button
-                className="w-full py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                aria-current="page"
-                onClick={() => onSetWindow("vehicles")}
-              >
-                كشف الميري الشامل
-              </button>
-            </li>
-          </ul>
+            ))}
+          </nav>
         </div>
       </div>
     </nav>

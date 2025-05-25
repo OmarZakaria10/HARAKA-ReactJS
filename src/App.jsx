@@ -4,6 +4,7 @@ import VehicleGrid from "./components/grids/VehicleGrid";
 import Navbar from "./components/Navbar";
 import Heading from "./components/Heading";
 import LicensesGrid from "./components/grids/LicenceGrid";
+import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
 
 function App() {
   const [window, setWindow] = useState("vehicles");
@@ -17,8 +18,10 @@ function App() {
         header={"إدارة الحركة ومركز الصيانة"}
         paragraph={"جهاز مستقبل مصر"}
       />
+
       {window === "vehicles" && <VehicleGrid />}
       {window === "licenses" && <LicensesGrid />}
+      {window === "expired" && <ExpiredLicensesGrid />}
     </div>
   );
 }

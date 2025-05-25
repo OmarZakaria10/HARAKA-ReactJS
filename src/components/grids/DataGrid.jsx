@@ -6,10 +6,8 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import AssociatedDataForm from "../forms/AssociatedDataForm";
 import { AgGridReact } from "ag-grid-react";
 import Button from "../Button";
-import PopUp from "../PopUp";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -32,65 +30,59 @@ const myTheme = themeQuartz.withParams({
 const DataGrid = ({
   direction = "rtl",
   config,
+  children,
+  onSelectionChange,
 }) => {
   const {
-    // Data configuration
     headers,
     fetchData,
-    deleteData,
-    
-    // Component configuration
-    AddFormComponent,
-    UpdateFormComponent,
-    
-    // Labels and text
-    labels,
-    
-    // Associated data configuration
-    associatedDataConfig,
-    
-    // Feature flags
+    labels = {},
     features = {
       hideButton: false,
-      associatedData: false,
-    }
+      export: true,
+    },
+    updateTrigger = 0,
   } = config;
 
-  // ------------------------------states------------------------------
+  // States
   const [rowData, setRowData] = useState([]);
   const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
   const [loading, setLoading] = useState(true);
   const [colDefs] = useState(headers);
-  const [AddModal, setAddModal] = useState(false);
-  const [UpdateModal, setUpdateModal] = useState(false);
-  const [showAssociatedModal, setShowAssociatedModal] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
 
-  // ---------------------------callback functions-----------------------
-  const updateGridRef = useRef(0);
-  
+  // Grid setup functions
   const onGridReady = (params) => {
     setGridApi(params.api);
     params.api.sizeColumnsToFit();
   };
 
-  const autoSizeStrategy = useMemo(() => {
-    return {
+  const autoSizeStrategy = useMemo(
+    () => ({
       type: "fitCellContents",
-    };
-  }, []);
+    }),
+    []
+  );
 
-  const rowSelection = useMemo(() => {
-    return {
+  const rowSelection = useMemo(
+    () => ({
       mode: "multiRow",
-    };
-  }, []);
+    }),
+    []
+  );
+
+  // Grid event handlers
+  const onSelectionChanged = useCallback(() => {
+    if (gridApi) {
+      const selectedRows = gridApi.getSelectedRows();
+      onSelectionChange?.(selectedRows);
+    }
+  }, [gridApi, onSelectionChange]);
 
   const onExportClick = useCallback(() => {
     if (gridApi) {
       const params = {
-        fileName: labels.exportFileName,
+        fileName: labels.exportFileName || "export.csv",
         processCellCallback: (params) => {
           return params.value ? "\uFEFF" + params.value : "";
         },
@@ -99,72 +91,22 @@ const DataGrid = ({
     }
   }, [gridApi, labels.exportFileName]);
 
-  const onSelectionChanged = useCallback(() => {
-    if (gridApi) {
-      setSelectedItems(gridApi.getSelectedRows());
-    }
-  }, [gridApi]);
-
   const onHideClick = useCallback(() => {
     if (gridApi) {
-      let selectedRows = gridApi.getSelectedRows();
+      const selectedRows = gridApi.getSelectedRows();
       if (selectedRows.length === 0) {
         alert(labels.selectToHideMessage || "Please select rows to hide");
         return;
       }
-      
-      const currentRows = [...rowData];
-      const selectedIds = selectedRows.map((row) => row.id);
-      const updatedRows = currentRows.filter(
-        (row) => !selectedIds.includes(row.id)
-      );
-      
-      setRowData(updatedRows);
-    }
-  }, [gridApi, rowData, labels.selectToHideMessage]);
-
-  const onDeleteClick = useCallback(() => {
-    if (gridApi) {
-      let selectedRows = gridApi.getSelectedRows();
-      if (selectedRows.length === 0) {
-        alert(labels.selectToDeleteMessage);
-        return;
-      }
-      
-      const isConfirmed = window.confirm(labels.confirmDeleteMessage);
-      if (!isConfirmed) {
-        return;
-      }
 
       const selectedIds = selectedRows.map((row) => row.id);
-      selectedIds.forEach((id) => {
-        deleteData(id)
-          .then(() => console.log(`${labels.entityName} ${id} deleted`))
-          .catch((err) => {
-            console.error(`Failed to delete ${labels.entityName}:`, err);
-          });
-      });
-      
       setRowData((prevRowData) =>
         prevRowData.filter((row) => !selectedIds.includes(row.id))
       );
     }
-  }, [gridApi, deleteData, labels]);
+  }, [gridApi, labels.selectToHideMessage]);
 
-  // Handler functions for form submissions
-  const handleAddSuccess = (newItem) => {
-    setRowData((prevRowData) => [...prevRowData, newItem]);
-    setAddModal(false);
-    updateGridRef.current += 1;
-  };
-
-  const handleUpdateSuccess = (updatedItem) => {
-    setRowData((prevRowData) => [...prevRowData, updatedItem]);
-    setUpdateModal(false);
-    updateGridRef.current += 1;
-  };
-
-  // -----------------------------Effect------------------------------
+  // Data fetching
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -172,17 +114,15 @@ const DataGrid = ({
         const items = await fetchData();
         setRowData(items);
       } catch (err) {
-        console.error(`Failed to fetch ${labels.entityName}:`, err);
-        setError(
-          `Failed to load ${labels.entityName}. Please check if the server is running.`
-        );
+        console.error("Failed to fetch data:", err);
+        setError("Failed to load data. Please check if the server is running.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchItems();
-  }, [updateGridRef.current]);
+  }, [fetchData, updateTrigger]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -203,17 +143,19 @@ const DataGrid = ({
     []
   );
 
-  // -------------------------UI-------------------------------
+  // Render
   return (
     <div className="flex flex-col h-screen">
       <div className="flex justify-between items-center p-2.5">
         {/* Left side buttons */}
         <div className="m-2.5 flex gap-2.5">
-          <Button
-            onClick={onExportClick}
-            title="Excel"
-            className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
-          />
+          {features.export && (
+            <Button
+              onClick={onExportClick}
+              title="Excel"
+              className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
+            />
+          )}
           {features.hideButton && (
             <Button
               onClick={onHideClick}
@@ -223,66 +165,8 @@ const DataGrid = ({
           )}
         </div>
 
-        {/* Right side buttons */}
-        <div className="m-2.5 flex gap-2.5">
-          <Button
-            onClick={onDeleteClick}
-            title="حذف"
-            className="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-          />
-
-          {/* Associated data modal */}
-          {features.associatedData && (
-            <PopUp
-              AddModal={showAssociatedModal}
-              setAddModal={setShowAssociatedModal}
-              title={associatedDataConfig.modalTitle}
-              buttonTitle={associatedDataConfig.buttonTitle}
-            >
-              {selectedItems && selectedItems.length === 1 ? (
-                <AssociatedDataForm
-                  {...{[associatedDataConfig.propName]: selectedItems[0]}}
-                  headers={associatedDataConfig.headers}
-                />
-              ) : (
-                <div className="text-xl text-center text-blue-200">
-                  {associatedDataConfig.selectMessage}
-                </div>
-              )}
-            </PopUp>
-          )}
-
-          {/* Update modal */}
-          <PopUp
-            AddModal={UpdateModal}
-            setAddModal={setUpdateModal}
-            title={labels.updateModalTitle}
-            buttonTitle="تعديل"
-          >
-            {selectedItems && selectedItems.length === 1 && UpdateFormComponent && (
-              <UpdateFormComponent
-                {...{[labels.propName]: selectedItems[0]}}
-                onSubmitSuccess={handleUpdateSuccess}
-                onCancel={() => setUpdateModal(false)}
-              />
-            )}
-          </PopUp>
-
-          {/* Add modal */}
-          <PopUp
-            AddModal={AddModal}
-            setAddModal={setAddModal}
-            title={labels.addModalTitle}
-            buttonTitle="إضافة"
-          >
-            {AddFormComponent && (
-              <AddFormComponent
-                onSubmitSuccess={handleAddSuccess}
-                onCancel={() => setAddModal(false)}
-              />
-            )}
-          </PopUp>
-        </div>
+        {/* Right side buttons/components */}
+        <div className="m-2.5 flex gap-2.5">{children}</div>
       </div>
 
       <div className="flex-1 w-full p-2.5">
