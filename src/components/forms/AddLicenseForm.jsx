@@ -1,26 +1,23 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import Headers from "../services/vehicleHeaders";
-import { endPoints } from "../services/endPoints";
+import LicenseHeaders from "../../services/licensesHeaders";
+import { endPoints } from "../../services/endPoints";
 
-export default function UpdateVehicleForm({
-  vehicle,
-  onSubmitSuccess,
-  onCancel,
-}) {
-  const [formData, setFormData] = useState(vehicle || {});
+export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
+  const [formData, setFormData] = useState(
+    Object.fromEntries(LicenseHeaders.map((header) => [header.field, ""]))
+  );
   const [uniqueValues, setUniqueValues] = useState({});
-
-  const requiredFields = ["code", "chassis_number", "vehicle_type"];
+  const requiredFields = ["serial_number", "plate_number", "license_type"];
   const firstInputRef = useRef(null);
-  console.log(vehicle);
+
   useEffect(() => {
     async function getUniqueValues() {
       try {
-        const response = await endPoints.getUniqueFieldValues();
+        const response = await endPoints.getLicenseUniqueFieldValues();
         setUniqueValues(response.data);
-      } catch (err) {
-        console.log("Failed to fetch unique values");
+      } catch (error) {
+        console.log(error);
       }
     }
     getUniqueValues();
@@ -41,21 +38,21 @@ export default function UpdateVehicleForm({
     const processedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
-        value?.trim?.() || value || null,
+        value.trim() === "" ? null : value.trim(),
       ])
     );
 
-    handleUpdateVehicle(processedData);
+    handleAddLicense(processedData);
   };
 
-  const handleUpdateVehicle = async (vehicleData) => {
+  const handleAddLicense = async (licenseData) => {
     try {
-      const response = await endPoints.updateVehicle(vehicle.id, vehicleData);
+      const response = await endPoints.createLicense(licenseData);
       onSubmitSuccess(response.data);
-      alert("تم تعديل المركبة بنجاح");
+      alert("تمت إضافة الرخصة بنجاح");
     } catch (err) {
-      console.error("Failed to update vehicle:", err);
-      alert("فشل في تعديل المركبة");
+      console.error("Failed to add license:", err);
+      alert("فشل في إضافة الرخصة");
     }
   };
 
@@ -69,7 +66,7 @@ export default function UpdateVehicleForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {Headers.map((header, index) => (
+        {LicenseHeaders.map((header, index) => (
           <div key={header.field}>
             <div className="mb-2 block text-right">
               <Label htmlFor={header.field}>
@@ -84,12 +81,13 @@ export default function UpdateVehicleForm({
               dir="rtl"
               id={header.field}
               ref={index === 0 ? firstInputRef : null}
-              value={formData[header.field] || ""}
+              value={formData[header.field]}
               onChange={(e) => handleChange(header.field, e.target.value)}
               placeholder={header.headerName}
               required={requiredFields.includes(header.field)}
               list={`${header.field}-list`}
               autoComplete="on"
+              autoFocus={index === 0}
             />
             {uniqueValues[header.field] && (
               <datalist id={`${header.field}-list`}>
@@ -106,7 +104,7 @@ export default function UpdateVehicleForm({
           إلغاء
         </Button>
         <Button type="submit" color="blue">
-          تعديل مركبة
+          إضافة رخصة
         </Button>
       </div>
     </form>

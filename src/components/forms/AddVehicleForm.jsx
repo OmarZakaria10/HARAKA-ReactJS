@@ -1,15 +1,28 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import LicenseHeaders from "../services/licensesHeaders";
-import { endPoints } from "../services/endPoints";
+import Headers from "../../services/vehicleHeaders";
+import { endPoints } from "../../services/endPoints";
 
-export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
+export default function VehicleForm({ onSubmitSuccess, onCancel }) {
   const [formData, setFormData] = useState(
-    Object.fromEntries(LicenseHeaders.map((header) => [header.field, ""]))
+    Object.fromEntries(Headers.map((header) => [header.field, ""]))
   );
-  
-  const requiredFields = ["serial_number", "plate_number", "license_type"];
+  const [uniqueValues, setUniqueValues] = useState({});
+
+  const requiredFields = ["code", "chassis_number", "vehicle_type"];
   const firstInputRef = useRef(null);
+
+  useEffect(() => {
+    async function getUniqueValues() {
+      try {
+        const response = await endPoints.getUniqueFieldValues();
+        setUniqueValues(response.data);
+      } catch (err) {
+        console.log("Failed to fetch unique values");
+      }
+    }
+    getUniqueValues();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,17 +43,17 @@ export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
       ])
     );
 
-    handleAddLicense(processedData);
+    handleAddVehicle(processedData);
   };
 
-  const handleAddLicense = async (licenseData) => {
+  const handleAddVehicle = async (vehicleData) => {
     try {
-      const response = await endPoints.createLicense(licenseData);
+      const response = await endPoints.createVehicle(vehicleData);
       onSubmitSuccess(response.data);
-      alert("تمت إضافة الرخصة بنجاح");
+      alert("تمت إضافة المركبة بنجاح");
     } catch (err) {
-      console.error("Failed to add license:", err);
-      alert("فشل في إضافة الرخصة");
+      console.error("Failed to add vehicle:", err);
+      alert("فشل في إضافة المركبة");
     }
   };
 
@@ -54,7 +67,7 @@ export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {LicenseHeaders.map((header, index) => (
+        {Headers.map((header, index) => (
           <div key={header.field}>
             <div className="mb-2 block text-right">
               <Label htmlFor={header.field}>
@@ -73,9 +86,17 @@ export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
               onChange={(e) => handleChange(header.field, e.target.value)}
               placeholder={header.headerName}
               required={requiredFields.includes(header.field)}
+              list={`${header.field}-list`}
               autoComplete="on"
               autoFocus={index === 0}
             />
+            {uniqueValues[header.field] && (
+              <datalist id={`${header.field}-list`}>
+                {uniqueValues[header.field].map((value, i) => (
+                  <option key={i} value={value} />
+                ))}
+              </datalist>
+            )}
           </div>
         ))}
       </div>
@@ -84,7 +105,7 @@ export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
           إلغاء
         </Button>
         <Button type="submit" color="blue">
-          إضافة رخصة
+          إضافة مركبة
         </Button>
       </div>
     </form>

@@ -165,27 +165,31 @@ class Axios {
 
   async getLicenseUniqueFieldValues() {
     try {
-      const response = await this.api.get("/licenses/getUniqueFieldValues");
+      const response = await this.api.get(
+        `/licenses/getUniqueFieldValues/?fields=license_type,vehicle_type,recipient,notes`
+      );
       return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-  async getExpiringLicenses() {
-    try {
-      const response = await this.api.get("/licenses/getExpiringLicenses");
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  }
   async getLicenseByVehicleId(id) {
     try {
       const response = await this.api.get(
         `/licenses/getLicenseByVehicleId/${id}`
       );
       return response.data.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getExpiringLicenses(date) {
+    try {
+      const response = await this.api.get(
+        `/licenses/getExpiringLicenses?date=${date}`
+      );
+      return response.data;
     } catch (error) {
       throw error;
     }

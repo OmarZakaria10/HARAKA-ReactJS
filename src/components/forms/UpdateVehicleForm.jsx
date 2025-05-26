@@ -1,17 +1,19 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import Headers from "../services/vehicleHeaders";
-import { endPoints } from "../services/endPoints";
+import Headers from "../../services/vehicleHeaders";
+import { endPoints } from "../../services/endPoints";
 
-export default function VehicleForm({ onSubmitSuccess, onCancel }) {
-  const [formData, setFormData] = useState(
-    Object.fromEntries(Headers.map((header) => [header.field, ""]))
-  );
+export default function UpdateVehicleForm({
+  vehicle,
+  onSubmitSuccess,
+  onCancel,
+}) {
+  const [formData, setFormData] = useState(vehicle || {});
   const [uniqueValues, setUniqueValues] = useState({});
 
   const requiredFields = ["code", "chassis_number", "vehicle_type"];
   const firstInputRef = useRef(null);
-
+  console.log(vehicle);
   useEffect(() => {
     async function getUniqueValues() {
       try {
@@ -22,7 +24,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
       }
     }
     getUniqueValues();
-  });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,21 +41,21 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
     const processedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
-        value.trim() === "" ? null : value.trim(),
+        value?.trim?.() || value || null,
       ])
     );
 
-    handleAddVehicle(processedData);
+    handleUpdateVehicle(processedData);
   };
 
-  const handleAddVehicle = async (vehicleData) => {
+  const handleUpdateVehicle = async (vehicleData) => {
     try {
-      const response = await endPoints.createVehicle(vehicleData);
+      const response = await endPoints.updateVehicle(vehicle.id, vehicleData);
       onSubmitSuccess(response.data);
-      alert("تمت إضافة المركبة بنجاح");
+      alert("تم تعديل المركبة بنجاح");
     } catch (err) {
-      console.error("Failed to add vehicle:", err);
-      alert("فشل في إضافة المركبة");
+      console.error("Failed to update vehicle:", err);
+      alert("فشل في تعديل المركبة");
     }
   };
 
@@ -82,13 +84,12 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
               dir="rtl"
               id={header.field}
               ref={index === 0 ? firstInputRef : null}
-              value={formData[header.field]}
+              value={formData[header.field] || ""}
               onChange={(e) => handleChange(header.field, e.target.value)}
               placeholder={header.headerName}
               required={requiredFields.includes(header.field)}
               list={`${header.field}-list`}
               autoComplete="on"
-              autoFocus={index === 0}
             />
             {uniqueValues[header.field] && (
               <datalist id={`${header.field}-list`}>
@@ -105,7 +106,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
           إلغاء
         </Button>
         <Button type="submit" color="blue">
-          إضافة مركبة
+          تعديل مركبة
         </Button>
       </div>
     </form>
