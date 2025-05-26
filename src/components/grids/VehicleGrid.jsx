@@ -14,12 +14,13 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAssociatedModal, setShowAssociatedModal] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0); // Added updateTrigger
 
   const handleSelectionChange = useCallback((selected) => {
-    setSelectedItems(selected);
+    setSelectedItems([...selected]); // Changed to create new array
   }, []);
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => { // Changed to async/await
     if (selectedItems.length === 0) {
       alert("الرجاء اختيار المركبات المراد حذفها");
       return;
@@ -28,17 +29,30 @@ const VehicleGrid = ({ direction = "rtl" }) => {
     const isConfirmed = window.confirm("هل أنت متأكد من حذف المركبات المحددة؟");
     if (!isConfirmed) return;
 
-    selectedItems.forEach((item) => {
-      endPoints
-        .deleteVehicle(item.id)
-        .then(() => console.log(`Vehicle ${item.id} deleted`))
-        .catch((err) => console.error("Failed to delete vehicle:", err));
-    });
+    try {
+      await Promise.all(
+        selectedItems.map((item) => endPoints.deleteVehicle(item.id))
+      );
+      setSelectedItems([]); // Clear selection after deletion
+      setUpdateTrigger((prev) => prev + 1); // Trigger refresh
+    } catch (err) {
+      console.error("Failed to delete vehicles:", err);
+    }
   }, [selectedItems]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await endPoints.getAllVehicles();
+      return response;
+    } catch (error) {
+      console.error("Error fetching vehicles:", error);
+      throw error;
+    }
+  }, []);
 
   const config = {
     headers: vehicleHeaders,
-    fetchData: () => endPoints.getAllVehicles(),
+    fetchData,
     labels: {
       exportFileName: "الميري الشامل.csv",
       selectToHideMessage: "الرجاء اختيار المركبات المراد إخفائها",
@@ -47,6 +61,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       hideButton: true,
       export: true,
     },
+    updateTrigger, // Added updateTrigger to config
   };
 
   return (
@@ -55,11 +70,16 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       config={config}
       onSelectionChange={handleSelectionChange}
     >
-      <Button
-        onClick={handleDelete}
-        title="حذف"
-        className="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-      />
+      <div className="flex items-center gap-2.5">
+
+        <Button
+          onClick={handleDelete}
+          title="حذف"
+          className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
+          disabled={selectedItems.length === 0}
+        />
+    
+      </div>
 
       <PopUp
         AddModal={showAssociatedModal}
@@ -88,7 +108,10 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         {selectedItems.length === 1 && (
           <UpdateVehicleForm
             vehicle={selectedItems[0]}
-            onSubmitSuccess={() => setShowUpdateModal(false)}
+            onSubmitSuccess={() => {
+              setShowUpdateModal(false);
+              setUpdateTrigger((prev) => prev + 1); // Added update trigger
+            }}
             onCancel={() => setShowUpdateModal(false)}
           />
         )}
@@ -101,7 +124,10 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         buttonTitle="إضافة"
       >
         <AddVehicleForm
-          onSubmitSuccess={() => setShowAddModal(false)}
+          onSubmitSuccess={() => {
+            setShowAddModal(false);
+            setUpdateTrigger((prev) => prev + 1); // Added update trigger
+          }}
           onCancel={() => setShowAddModal(false)}
         />
       </PopUp>

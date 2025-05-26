@@ -9,18 +9,19 @@ import PopUp from "../PopUp";
 import AddLicenseForm from "../forms/AddLicenseForm";
 import UpdateLicenseForm from "../forms/UpdateLicenseForm";
 import AssociatedDataForm from "../forms/AssociatedDataForm";
-import DatePicker from "../DatePicker";
+
 const LicensesGrid = ({ direction = "rtl" }) => {
-  // States for managing popups and selections
   const [selectedItems, setSelectedItems] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAssociatedModal, setShowAssociatedModal] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
+
   const handleSelectionChange = useCallback((selected) => {
-    setSelectedItems(selected);
+    setSelectedItems([...selected]);
   }, []);
 
-  const handleDelete = useCallback(() => {
+  const handleDelete = useCallback(async () => {
     if (selectedItems.length === 0) {
       alert("الرجاء اختيار الرخص المراد حذفها");
       return;
@@ -29,17 +30,30 @@ const LicensesGrid = ({ direction = "rtl" }) => {
     const isConfirmed = window.confirm("هل أنت متأكد من حذف الرخص المحددة؟");
     if (!isConfirmed) return;
 
-    selectedItems.forEach((item) => {
-      endPoints
-        .deleteLicense(item.id)
-        .then(() => console.log(`License ${item.id} deleted`))
-        .catch((err) => console.error("Failed to delete license:", err));
-    });
+    try {
+      await Promise.all(
+        selectedItems.map((item) => endPoints.deleteLicense(item.id))
+      );
+      setSelectedItems([]);
+      setUpdateTrigger((prev) => prev + 1);
+    } catch (err) {
+      console.error("Failed to delete licenses:", err);
+    }
   }, [selectedItems]);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await endPoints.getAllLicenses();
+      return response;
+    } catch (error) {
+      console.error("Error fetching licenses:", error);
+      throw error;
+    }
+  }, []);
 
   const config = {
     headers: licensesHeaders,
-    fetchData: () => endPoints.getAllLicenses(),
+    fetchData,
     labels: {
       exportFileName: "رخص العربات.csv",
       selectToHideMessage: "الرجاء اختيار الرخص المراد إخفائها",
@@ -48,6 +62,7 @@ const LicensesGrid = ({ direction = "rtl" }) => {
       hideButton: true,
       export: true,
     },
+    updateTrigger,
   };
 
   return (
@@ -56,11 +71,16 @@ const LicensesGrid = ({ direction = "rtl" }) => {
       config={config}
       onSelectionChange={handleSelectionChange}
     >
-      <Button
-        onClick={handleDelete}
-        title="حذف"
-        className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-      />
+      <div className="flex items-center gap-2.5">
+
+        <Button
+          onClick={handleDelete}
+          title="حذف"
+          className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
+          disabled={selectedItems.length === 0}
+        />
+
+      </div>
 
       <PopUp
         AddModal={showAssociatedModal}
@@ -89,7 +109,10 @@ const LicensesGrid = ({ direction = "rtl" }) => {
         {selectedItems.length === 1 && (
           <UpdateLicenseForm
             license={selectedItems[0]}
-            onSubmitSuccess={() => setShowUpdateModal(false)}
+            onSubmitSuccess={() => {
+              setShowUpdateModal(false);
+              setUpdateTrigger((prev) => prev + 1);
+            }}
             onCancel={() => setShowUpdateModal(false)}
           />
         )}
@@ -102,7 +125,10 @@ const LicensesGrid = ({ direction = "rtl" }) => {
         buttonTitle="إضافة"
       >
         <AddLicenseForm
-          onSubmitSuccess={() => setShowAddModal(false)}
+          onSubmitSuccess={() => {
+            setShowAddModal(false);
+            setUpdateTrigger((prev) => prev + 1);
+          }}
           onCancel={() => setShowAddModal(false)}
         />
       </PopUp>

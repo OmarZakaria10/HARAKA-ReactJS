@@ -16,7 +16,7 @@ export default function UpdateLicenseForm({
     e.preventDefault();
 
     const requiredFieldsValid = requiredFields.every(
-      (field) => formData[field]?.trim() !== ""
+      (field) => formData[field] !== ""
     );
 
     if (!requiredFieldsValid) {
