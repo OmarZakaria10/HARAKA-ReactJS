@@ -13,7 +13,7 @@ export default function UpdateVehicleForm({
 
   const requiredFields = ["code", "chassis_number", "vehicle_type"];
   const firstInputRef = useRef(null);
-  console.log(vehicle);
+
   useEffect(() => {
     async function getUniqueValues() {
       try {
@@ -53,6 +53,11 @@ export default function UpdateVehicleForm({
       const response = await endPoints.updateVehicle(vehicle.id, vehicleData);
       onSubmitSuccess(response.data);
       alert("تم تعديل المركبة بنجاح");
+      if(vehicleData.plate_number_malaky === null){    
+        console.log("بدون رخصة ملاكي");
+      }else{
+        console.log("برخصة ملاكي")
+      }
     } catch (err) {
       console.error("Failed to update vehicle:", err);
       alert("فشل في تعديل المركبة");

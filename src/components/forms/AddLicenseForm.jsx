@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import LicenseHeaders from "../../services/licensesHeaders";
 import { endPoints } from "../../services/endPoints";
 
-export default function AddLicenseForm({ onSubmitSuccess, onCancel }) {
-  const [formData, setFormData] = useState(
-    Object.fromEntries(LicenseHeaders.map((header) => [header.field, ""]))
+export default function AddLicenseForm({ 
+  onSubmitSuccess,
+   onCancel }) {
+  const [formData, setFormData] = useState(Object.fromEntries(LicenseHeaders.map((header) => [header.field, ""]))
   );
   const [uniqueValues, setUniqueValues] = useState({});
   const requiredFields = ["serial_number", "plate_number", "license_type"];
