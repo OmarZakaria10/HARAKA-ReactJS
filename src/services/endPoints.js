@@ -5,7 +5,7 @@ class Axios {
 
   constructor() {
     this.api = axios.create({
-      baseURL: "http://localhost:4000",
+      baseURL: "http://localhost:8080",
       headers: {
         "Content-Type": "application/json",
       },
