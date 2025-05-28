@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  useRef,
 } from "react";
 import { AgGridReact } from "ag-grid-react";
 import Button from "../Button";
@@ -45,7 +46,9 @@ const DataGrid = ({
 
   // States
   const [rowData, setRowData] = useState([]);
+  const [error, setError] = useState(null);
   const [gridApi, setGridApi] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [colDefs] = useState(headers);
 
   // Grid setup functions
@@ -107,10 +110,14 @@ const DataGrid = ({
   useEffect(() => {
     const fetchItems = async () => {
       try {
+        setLoading(true);
         const items = await fetchData();
         setRowData(items);
       } catch (err) {
         console.error("Failed to fetch data:", err);
+        setError("Failed to load data. Please check if the server is running.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -126,17 +133,19 @@ const DataGrid = ({
         buttons: ["reset", "apply"],
         closeOnApply: true,
       },
+      exportable: true,
       resizable: true,
       minWidth: 100,
       cellStyle: { textAlign: "right" },
+      enableCellTextSelection: true,
+      copyable: true,
     }),
     []
   );
 
   // Render
   return (
-    /* h-[42.5rem] to fit 1280 x 1024 5:4 resolution container */
-    <div className="flex flex-col h-[42.5rem]">
+    <div className="flex flex-col h-screen">
       <div className="flex justify-between items-center p-2.5">
         {/* Left side buttons */}
         <div className="m-2.5 flex gap-2.5">
@@ -170,11 +179,11 @@ const DataGrid = ({
           onGridReady={onGridReady}
           enableRtl={direction === "rtl"}
           rowSelection={rowSelection}
+          rowDragManaged={true}
           enableCellTextSelection={true}
-          ensureDomOrder={true}
           autoSizeStrategy={autoSizeStrategy}
           onSelectionChanged={onSelectionChanged}
-          paginationPageSize={100}
+          paginationPageSize={500}
           pagination={true}
           overlayLoadingTemplate={
             '<span class="ag-overlay-loading-center">جاري التحميل...</span>'

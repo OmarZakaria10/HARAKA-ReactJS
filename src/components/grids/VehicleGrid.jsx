@@ -70,17 +70,17 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       config={config}
       onSelectionChange={handleSelectionChange}
     >
-
       <div className="flex items-center gap-2.5">
+
         <Button
           onClick={handleDelete}
           title="حذف"
           className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
           disabled={selectedItems.length === 0}
         />
+    
       </div>
 
-{/*Associated License PopUp*/}
       <PopUp
         AddModal={showAssociatedModal}
         setAddModal={setShowAssociatedModal}
@@ -99,7 +99,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         )}
       </PopUp>
 
-{/*Update Vehicle PopUp*/}
       <PopUp
         AddModal={showUpdateModal}
         setAddModal={setShowUpdateModal}
@@ -118,7 +117,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         )}
       </PopUp>
 
-{/*Add Vehicle PopUp*/}
       <PopUp
         AddModal={showAddModal}
         setAddModal={setShowAddModal}
