@@ -22,6 +22,7 @@ function App() {
       {window === "vehicles" && <VehicleGrid />}
       {window === "licenses" && <LicensesGrid />}
       {window === "expired" && <ExpiredLicensesGrid />}
+      
     </div>
   );
 }

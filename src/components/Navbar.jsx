@@ -15,7 +15,7 @@ export default function Navbar({ name, onSetWindow }) {
   ];
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900 shadow-md">
+    <nav className="h-[7vh] bg-white border-gray-200 dark:bg-gray-900 shadow-md">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {/* Logo and Brand Name */}
         <a

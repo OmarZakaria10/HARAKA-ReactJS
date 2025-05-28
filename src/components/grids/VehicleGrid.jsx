@@ -3,6 +3,7 @@ import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
 import vehicleHeaders from "../../services/vehicleHeaders";
+import licensesHeaders from "../../services/licensesHeaders";
 import Button from "../Button";
 import PopUp from "../PopUp";
 import AddVehicleForm from "../forms/AddVehicleForm";
@@ -70,17 +71,17 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       config={config}
       onSelectionChange={handleSelectionChange}
     >
-
       <div className="flex items-center gap-2.5">
+
         <Button
           onClick={handleDelete}
           title="حذف"
           className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
           disabled={selectedItems.length === 0}
         />
+    
       </div>
 
-{/*Associated License PopUp*/}
       <PopUp
         AddModal={showAssociatedModal}
         setAddModal={setShowAssociatedModal}
@@ -90,7 +91,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         {selectedItems.length === 1 ? (
           <AssociatedDataForm
             vehicle={selectedItems[0]}
-            headers={vehicleHeaders}
+            headers={licensesHeaders}
           />
         ) : (
           <div className="text-xl text-center text-blue-200">
@@ -99,7 +100,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         )}
       </PopUp>
 
-{/*Update Vehicle PopUp*/}
       <PopUp
         AddModal={showUpdateModal}
         setAddModal={setShowUpdateModal}
@@ -118,7 +118,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         )}
       </PopUp>
 
-{/*Add Vehicle PopUp*/}
       <PopUp
         AddModal={showAddModal}
         setAddModal={setShowAddModal}
