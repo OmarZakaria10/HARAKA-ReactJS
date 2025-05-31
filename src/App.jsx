@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 import Heading from "./components/Heading";
 import LicensesGrid from "./components/grids/LicenceGrid";
 import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
-
+import ReportsGrid from "./components/grids/ReportsGrid";
 function App() {
   const [window, setWindow] = useState("vehicles");
   return (
@@ -22,7 +22,7 @@ function App() {
       {window === "vehicles" && <VehicleGrid />}
       {window === "licenses" && <LicensesGrid />}
       {window === "expired" && <ExpiredLicensesGrid />}
-      
+      {window === "reports" && <ReportsGrid />}
     </div>
   );
 }
