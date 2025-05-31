@@ -1,19 +1,17 @@
 import logo from "../assets/FOE.png";
 import { useState } from "react";
-
 export default function Navbar({ name, onSetWindow }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
   const menuItems = [
+    { id: "reports", label: "التقارير" },
     { id: "expired", label: "الرخص المنتهية" },
     { id: "licenses", label: "كشف الرخص" },
     { id: "vehicles", label: "كشف الميري الشامل" },
   ];
-
   return (
     <nav className="h-[7vh] bg-white border-gray-200 dark:bg-gray-900 shadow-md">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">

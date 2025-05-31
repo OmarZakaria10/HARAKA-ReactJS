@@ -17,11 +17,11 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [showAssociatedModal, setShowAssociatedModal] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(0); // Added updateTrigger
 
-  const handleSelectionChange = useCallback((selected) => {
-    setSelectedItems([...selected]); // Changed to create new array
+  const handleSelectionChange = useCallback(async (selected) => {
+    setSelectedItems([...selected]); 
   }, []);
 
-  const handleDelete = useCallback(async () => { // Changed to async/await
+  const handleDelete = useCallback(async () => { 
     if (selectedItems.length === 0) {
       alert("الرجاء اختيار المركبات المراد حذفها");
       return;
@@ -72,16 +72,13 @@ const VehicleGrid = ({ direction = "rtl" }) => {
       onSelectionChange={handleSelectionChange}
     >
       <div className="flex items-center gap-2.5">
-
         <Button
           onClick={handleDelete}
           title="حذف"
           className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
           disabled={selectedItems.length === 0}
         />
-    
       </div>
-
       <PopUp
         AddModal={showAssociatedModal}
         setAddModal={setShowAssociatedModal}
@@ -117,7 +114,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           />
         )}
       </PopUp>
-
       <PopUp
         AddModal={showAddModal}
         setAddModal={setShowAddModal}
