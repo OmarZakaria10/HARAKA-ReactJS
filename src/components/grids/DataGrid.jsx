@@ -115,9 +115,7 @@ const DataGrid = ({
         setRowData(items);
       } catch (err) {
         console.error("Failed to fetch data:", err);
-        setError("Failed to load data. Please check if the server is running.");
       } finally {
-        setLoading(false);
       }
     };
 
@@ -145,8 +143,8 @@ const DataGrid = ({
 
   // Render
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex justify-between items-center p-2.5">
+    <div className="flex flex-col  h-[80vh]">
+      <div className="flex justify-between h-[4vh] items-center p-2.5">
         {/* Left side buttons */}
         <div className="m-2.5 flex gap-2.5">
           {features.export && (
@@ -169,7 +167,7 @@ const DataGrid = ({
         <div className="m-2.5 flex gap-2.5">{children}</div>
       </div>
 
-      <div className="flex-1 w-full p-2.5">
+      <div className="flex-1 w-full h-[50vh] p-2.5">
         <AgGridReact
           rowData={rowData}
           columnDefs={colDefs}

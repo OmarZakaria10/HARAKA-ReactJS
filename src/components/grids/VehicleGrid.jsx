@@ -3,6 +3,7 @@ import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
 import vehicleHeaders from "../../services/vehicleHeaders";
+import licensesHeaders from "../../services/licensesHeaders";
 import Button from "../Button";
 import PopUp from "../PopUp";
 import AddVehicleForm from "../forms/AddVehicleForm";
@@ -16,11 +17,11 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const [showAssociatedModal, setShowAssociatedModal] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(0); // Added updateTrigger
 
-  const handleSelectionChange = useCallback((selected) => {
-    setSelectedItems([...selected]); // Changed to create new array
+  const handleSelectionChange = useCallback(async (selected) => {
+    setSelectedItems([...selected]); 
   }, []);
 
-  const handleDelete = useCallback(async () => { // Changed to async/await
+  const handleDelete = useCallback(async () => { 
     if (selectedItems.length === 0) {
       alert("الرجاء اختيار المركبات المراد حذفها");
       return;
@@ -80,7 +81,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         />
     
       </div>
-
       <PopUp
         AddModal={showAssociatedModal}
         setAddModal={setShowAssociatedModal}
@@ -90,7 +90,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
         {selectedItems.length === 1 ? (
           <AssociatedDataForm
             vehicle={selectedItems[0]}
-            headers={vehicleHeaders}
+            headers={licensesHeaders}
           />
         ) : (
           <div className="text-xl text-center text-blue-200">
@@ -116,7 +116,6 @@ const VehicleGrid = ({ direction = "rtl" }) => {
           />
         )}
       </PopUp>
-
       <PopUp
         AddModal={showAddModal}
         setAddModal={setShowAddModal}
