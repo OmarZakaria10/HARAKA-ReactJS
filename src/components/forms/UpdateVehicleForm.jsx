@@ -190,8 +190,8 @@ export default function UpdateVehicleForm({
     return (
       <div className="space-y-4">
         <div className="text-center mb-4">
-          <h3 className="text-lg font-semibold text-blue-600">إضافة رخصة ملاكي جديدة</h3>
-          <p className="text-sm text-gray-600">تم تعبئة البيانات المشتركة تلقائياً. الرجاء إكمال البيانات المتبقية</p>
+          <h3 className="text-xl text-center font-medium text-blue-200">إضافة رخصة ملاكي جديدة</h3>
+          <p className="text-md text-center font-medium text-gray-500">تم تعبئة البيانات المشتركة تلقائياً. الرجاء إكمال البيانات المتبقية</p>
         </div>
         
         <form onSubmit={handleLicenseSubmit} className="space-y-4">
