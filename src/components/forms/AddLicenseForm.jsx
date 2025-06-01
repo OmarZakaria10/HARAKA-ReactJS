@@ -2,12 +2,28 @@ import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import LicenseHeaders from "../../services/licensesHeaders";
 import { endPoints } from "../../services/endPoints";
+import { mapVehicleToLicense } from "../../services/licenseMapper";
 
 export default function AddLicenseForm({ 
+  initialValues = {},
   onSubmitSuccess,
    onCancel }) {
-  const [formData, setFormData] = useState(Object.fromEntries(LicenseHeaders.map((header) => [header.field, ""]))
-  );
+  const [formData, setFormData] = useState(() => {
+    // Create base form data with empty strings
+    const baseFormData = Object.fromEntries(
+      LicenseHeaders.map((header) => [header.field, ""])
+    );
+    
+    // If we have initialValues, map them using licenseMapper
+    if (Object.keys(initialValues).length > 0) {
+      const mappedValues = mapVehicleToLicense(initialValues);
+      return {
+        ...baseFormData,
+        ...mappedValues
+      };
+    }
+    return baseFormData;
+  });
   const [uniqueValues, setUniqueValues] = useState({});
   const requiredFields = ["serial_number", "plate_number", "license_type"];
   const firstInputRef = useRef(null);
@@ -15,6 +31,7 @@ export default function AddLicenseForm({
   useEffect(() => {
     async function getUniqueValues() {
       try {
+        console.log(formData)
         const response = await endPoints.getLicenseUniqueFieldValues();
         setUniqueValues(response.data);
       } catch (error) {
@@ -46,9 +63,20 @@ export default function AddLicenseForm({
     handleAddLicense(processedData);
   };
 
-  const handleAddLicense = async (licenseData) => {
+   const handleAddLicense = async (licenseData) => {
     try {
-      const response = await endPoints.createLicense(licenseData);
+      // Ensure all required data is present
+      const dataToSubmit = {
+        ...licenseData,
+        vehicleId: initialValues.id,
+        // Add default dates if not provided
+        license_start_date: licenseData.license_start_date || new Date().toISOString().split('T')[0],
+        license_end_date: licenseData.license_end_date || new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]
+      };
+
+      console.log("Adding license with data:", dataToSubmit);
+      const response = await endPoints.createLicense(dataToSubmit);
+      console.log("License added successfully:", response);
       onSubmitSuccess(response.data);
       alert("تمت إضافة الرخصة بنجاح");
     } catch (err) {

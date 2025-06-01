@@ -2,13 +2,16 @@ import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import Headers from "../../services/vehicleHeaders";
 import { endPoints } from "../../services/endPoints";
-
+import PopUp from "../PopUp";
+import AddLicenseForm from "./AddLicenseForm";
 export default function VehicleForm({ onSubmitSuccess, onCancel }) {
   const [formData, setFormData] = useState(
     Object.fromEntries(Headers.map((header) => [header.field, ""]))
   );
   const [uniqueValues, setUniqueValues] = useState({});
-
+  const [showAddLicenseModal, setShowAddLicenseModal] = useState(false);
+  const [isMalaky, setIsMalaky] = useState(false);
+  const [vehicleData, setVehicleData] = useState({});
   const requiredFields = ["code", "chassis_number", "vehicle_type"];
   const firstInputRef = useRef(null);
 
@@ -46,16 +49,23 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
     handleAddVehicle(processedData);
   };
 
-  const handleAddVehicle = async (vehicleData) => {
-    try {
-      const response = await endPoints.createVehicle(vehicleData);
-      onSubmitSuccess(response.data);
-      alert("تمت إضافة المركبة بنجاح");
-    } catch (err) {
-      console.error("Failed to add vehicle:", err);
-      alert("فشل في إضافة المركبة");
-    }
-  };
+const handleAddVehicle = async (vehicleData) => {
+  try {
+    const response = await endPoints.createVehicle(vehicleData);
+    // onSubmitSuccess(response.data);
+    console.log("Vehicle added successfully:", response.data.vehicle);
+    window.confirm("تمت إضافة المركبة بنجاح");
+    
+    // Check plate_number_malaky directly and show modal if it exists
+    if (response.data.vehicle.plate_number_malaky) {
+      setVehicleData(response.data.vehicle);
+      setShowAddLicenseModal(true);
+    }else onSubmitSuccess(response.data)
+  } catch (err) {
+    console.error("Failed to add vehicle:", err);
+    alert("فشل في إضافة المركبة");
+  }
+};
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({
@@ -65,6 +75,7 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Headers.map((header, index) => (
@@ -109,5 +120,21 @@ export default function VehicleForm({ onSubmitSuccess, onCancel }) {
         </Button>
       </div>
     </form>
+        {showAddLicenseModal && <PopUp
+        AddModal={showAddLicenseModal}
+        setAddModal={setShowAddLicenseModal}
+        title="إضافة رخصة للمركبة"
+        button={false}
+      >
+        <AddLicenseForm
+          initialValues={vehicleData}
+          onSubmitSuccess={(data) => {
+            setShowAddLicenseModal(false);
+            onSubmitSuccess(data);
+          }}
+          onCancel={() => setShowAddLicenseModal(false)}
+        />
+      </PopUp>}
+    </>
   );
 }

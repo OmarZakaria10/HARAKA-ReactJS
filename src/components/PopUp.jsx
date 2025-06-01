@@ -3,6 +3,7 @@ import { useRef } from "react";
 import CustomModal from "./CustomModal";
 
 export default function PopUp({
+  button =true,
   children,
   title,
   buttonTitle,
@@ -13,7 +14,7 @@ export default function PopUp({
 
   return (
     <>
-      <Button onClick={() => setAddModal(true)}>{buttonTitle}</Button>
+      {button && <Button onClick={() => setAddModal(true)}>{buttonTitle}</Button>}
       <CustomModal
         isOpen={AddModal}
         onClose={() => setAddModal(false)}
