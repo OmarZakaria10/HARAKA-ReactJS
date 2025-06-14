@@ -12,7 +12,7 @@ import {
   ModuleRegistry,
   themeQuartz,
 } from "ag-grid-community";
-
+import { generateExcel, generatePDF } from '../../services/fileGenerator';
 ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
   backgroundColor: "#1f2836",
@@ -88,6 +88,7 @@ const DataGrid = ({
     }
   }, [gridApi, labels.exportFileName]);
 
+
   const onHideClick = useCallback(() => {
     if (gridApi) {
       const selectedRows = gridApi.getSelectedRows();
@@ -102,6 +103,71 @@ const DataGrid = ({
       );
     }
   }, [gridApi, labels.selectToHideMessage]);
+    const handleExcelExport = useCallback(async () => {
+        if (gridApi) {
+            try {
+                const visibleColumns = gridApi.getColumns()
+                    .filter(col => col.isVisible())
+                    .map(col => ({
+                        field: col.getColId(),
+                        headerName: col.getColDef().headerName
+                    }));
+
+                const rowData = [];
+                gridApi.forEachNodeAfterFilter(node => {
+                    if (node.data) rowData.push(node.data);
+                });
+
+                const buffer = await generateExcel(visibleColumns, rowData, labels.exportFileName);
+                
+                // Create blob and download
+                const blob = new Blob([buffer], { 
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+                });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${labels.exportFileName || 'export'}.xlsx`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Excel export failed:', error);
+                alert('فشل تصدير ملف Excel');
+            }
+        }
+    }, [gridApi, labels.exportFileName]);
+
+    const handlePDFExport = useCallback(async () => {
+        if (gridApi) {
+            try {
+                const visibleColumns = gridApi.getColumns()
+                    .filter(col => col.isVisible())
+                    .map(col => ({
+                        field: col.getColId(),
+                        headerName: col.getColDef().headerName
+                    }));
+
+                const rowData = [];
+                gridApi.forEachNodeAfterFilter(node => {
+                    if (node.data) rowData.push(node.data);
+                });
+
+                const buffer = await generatePDF(visibleColumns, rowData, labels.exportFileName);
+                
+                // Create blob and download
+                const blob = new Blob([buffer], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${labels.exportFileName || 'export'}.pdf`;
+                link.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('PDF export failed:', error);
+                alert('فشل تصدير ملف PDF');
+            }
+        }
+    }, [gridApi, labels.exportFileName]);
 
   // Data fetching
   useEffect(() => {
@@ -144,11 +210,23 @@ const DataGrid = ({
         {/* Left side buttons */}
         <div className="m-2.5 flex gap-2.5">
           {features.export && (
-            <Button
-              onClick={onExportClick}
-              title="Excel"
-              className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
-            />
+            <>
+              <Button
+                onClick={onExportClick}
+                title="Excel"
+                className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
+              />
+              <Button
+                onClick={handleExcelExport}
+                title="Excel"
+              lassName="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
+              />
+              <Button
+              onClick={handlePDFExport}
+              title="PDF"
+              lassName="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
+              />
+            </>
           )}
           {features.hideButton && (
             <Button
