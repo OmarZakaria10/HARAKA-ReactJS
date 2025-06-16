@@ -53,13 +53,13 @@ export default function NavbarComponent({ name, onSetWindow, user }) {
           </span>
         </a>
         
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation - Updated styling */}
         <div className="hidden md:flex items-center gap-8">
           {menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => onSetWindow(item.id)}
-              className="text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              className="text-gray-300 hover:text-blue-500 px-3 py-2 text-base font-medium transition-colors duration-200"
             >
               {item.label}
             </button>
