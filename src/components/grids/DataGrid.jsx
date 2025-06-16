@@ -12,7 +12,7 @@ import {
   ModuleRegistry,
   themeQuartz,
 } from "ag-grid-community";
-import { generateExcel, generatePDF } from '../../services/fileGenerator';
+import { generateExcel } from '../../services/fileGenerator';
 ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
   backgroundColor: "#1f2836",
@@ -52,6 +52,8 @@ const DataGrid = ({
   const onGridReady = (params) => {
     setGridApi(params.api);
     params.api.sizeColumnsToFit();
+
+    
   };
 
   const autoSizeStrategy = useMemo(
@@ -73,20 +75,12 @@ const DataGrid = ({
     if (gridApi) {
       const selectedRows = gridApi.getSelectedRows();
       onSelectionChange?.(selectedRows);
+      console.log(colDefs);
+      console.log(rowData);
     }
   }, [gridApi, onSelectionChange]);
 
-  const onExportClick = useCallback(() => {
-    if (gridApi) {
-      const params = {
-        fileName: labels.exportFileName || "export.csv",
-        processCellCallback: (params) => {
-          return params.value ? "\uFEFF" + params.value : "";
-        },
-      };
-      gridApi.exportDataAsCsv(params);
-    }
-  }, [gridApi, labels.exportFileName]);
+
 
 
   const onHideClick = useCallback(() => {
@@ -137,38 +131,7 @@ const DataGrid = ({
         }
     }, [gridApi, labels.exportFileName]);
 
-    const handlePDFExport = useCallback(async () => {
-        if (gridApi) {
-            try {
-                const visibleColumns = gridApi.getColumns()
-                    .filter(col => col.isVisible())
-                    .map(col => ({
-                        field: col.getColId(),
-                        headerName: col.getColDef().headerName
-                    }));
-
-                const rowData = [];
-                gridApi.forEachNodeAfterFilter(node => {
-                    if (node.data) rowData.push(node.data);
-                });
-
-                const buffer = await generatePDF(visibleColumns, rowData, labels.exportFileName);
-                
-                // Create blob and download
-                const blob = new Blob([buffer], { type: 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${labels.exportFileName || 'export'}.pdf`;
-                link.click();
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error('PDF export failed:', error);
-                alert('فشل تصدير ملف PDF');
-            }
-        }
-    }, [gridApi, labels.exportFileName]);
-
+ 
   // Data fetching
   useEffect(() => {
     const fetchItems = async () => {
@@ -178,6 +141,10 @@ const DataGrid = ({
       } catch (err) {
         console.error("Failed to fetch data:", err);
       } finally {
+
+        if (gridApi) {
+          gridApi.sizeColumnsToFit();
+        }
       }
     };
 
@@ -211,21 +178,13 @@ const DataGrid = ({
         <div className="m-2.5 flex gap-2.5">
           {features.export && (
             <>
-              <Button
-                onClick={onExportClick}
-                title="Excel"
-                className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
-              />
+
               <Button
                 onClick={handleExcelExport}
                 title="Excel"
-              lassName="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
+                className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
               />
-              <Button
-              onClick={handlePDFExport}
-              title="PDF"
-              lassName="w-20 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-              />
+
             </>
           )}
           {features.hideButton && (

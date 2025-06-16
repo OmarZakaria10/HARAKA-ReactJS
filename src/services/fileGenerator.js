@@ -1,9 +1,4 @@
 import ExcelJS from 'exceljs';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
-
-// Initialize pdfMake with fonts
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const CONFIG = {
     colors: {
@@ -17,55 +12,124 @@ const CONFIG = {
         headerSize: 12,
         bodySize: 11,
         titleSize: 16
+    },
+    layout: {
+        rowHeight: 25
     }
 };
 
-// Font configurations for pdfMake
-pdfMake.fonts = {
-    Amiri: {
-        normal: 'https://fonts.gstatic.com/s/amiri/v17/J7aRnpd8CGxBHpUrtLMA7w.ttf',
-        bold: 'https://fonts.gstatic.com/s/amiri/v17/J7acnpd8CGxBHp2VkaY6zp5yGAb.ttf'
+// Utility functions
+function validateData(headers, data) {
+    if (!Array.isArray(headers) || headers.length === 0) {
+        throw new Error('Headers must be a non-empty array');
     }
-};
+    if (!Array.isArray(data) || data.length === 0) {
+        throw new Error('Data must be a non-empty array');
+    }
+    
+    if (!headers.every(h => h.field && h.headerName)) {
+        throw new Error('Headers must have field and headerName properties');
+    }
+}
+
+function containsArabic(text) {
+    if (!text) return false;
+    const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    return arabicRegex.test(text);
+}
+
+function formatArabicText(text) {
+    if (!text) return '';
+    const textStr = text.toString();
+    return containsArabic(textStr) ? '\u202E' + textStr + '\u202C' : textStr;
+}
 
 export const generateExcel = async (headers, data, title = 'تقرير') => {
     try {
+        validateData(headers, data);
+        
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet(title, {
-            views: [{ rightToLeft: true }]
+            views: [{ 
+                rightToLeft: true,
+                showGridLines: false,
+                state: 'normal'
+            }]
         });
 
-        // Add headers
-        const headerRow = worksheet.addRow(headers.map(h => h.headerName));
-        headerRow.font = { 
-            bold: true,
-            size: CONFIG.fonts.headerSize
-        };
-        headerRow.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: CONFIG.colors.primary.replace('#', '') }
+        // Header style
+        const headerStyle = {
+            font: { 
+                name: 'Arial Unicode MS', 
+                size: CONFIG.fonts.headerSize, 
+                bold: true, 
+                color: { argb: 'FF' + CONFIG.colors.headerText.replace('#', '') } 
+            },
+            fill: { 
+                type: 'pattern', 
+                pattern: 'solid', 
+                fgColor: { argb: 'FF' + CONFIG.colors.primary.replace('#', '') } 
+            },
+            alignment: { horizontal: 'center', vertical: 'middle', readingOrder: 2 },
+            border: {
+                top: { style: 'thick', color: { argb: 'FF000000' } },
+                left: { style: 'thick', color: { argb: 'FF000000' } },
+                bottom: { style: 'thick', color: { argb: 'FF000000' } },
+                right: { style: 'thick', color: { argb: 'FF000000' } }
+            }
         };
 
-        // Add data
+        // Data style
+        const dataStyle = {
+            font: { name: 'Arial Unicode MS', size: CONFIG.fonts.bodySize },
+            alignment: { horizontal: 'center', vertical: 'middle', readingOrder: 2 },
+            border: {
+                top: { style: 'thin', color: { argb: 'FF000000' } },
+                left: { style: 'thin', color: { argb: 'FF000000' } },
+                bottom: { style: 'thin', color: { argb: 'FF000000' } },
+                right: { style: 'thin', color: { argb: 'FF000000' } }
+            }
+        };
+
+        // Add headers with proper Arabic formatting
+        const headerRow = worksheet.addRow(headers.map(h => formatArabicText(h.headerName)));
+        headerRow.eachCell((cell) => {
+            Object.assign(cell, headerStyle);
+        });
+        headerRow.height = CONFIG.layout.rowHeight;
+
+        // Add data rows
         data.forEach((row, index) => {
-            const dataRow = worksheet.addRow(
-                headers.map(header => row[header.field] || '')
+            const formattedRow = headers.map(header => 
+                formatArabicText(row[header.field] || '')
             );
             
-            if (index % 2 === 0) {
-                dataRow.fill = {
-                    type: 'pattern',
-                    pattern: 'solid',
-                    fgColor: { argb: CONFIG.colors.alternateRow.replace('#', '') }
-                };
-            }
+            const dataRow = worksheet.addRow(formattedRow);
+            
+            dataRow.eachCell((cell) => {
+                const rowStyle = index % 2 === 0 ? {
+                    ...dataStyle,
+                    fill: {
+                        type: 'pattern',
+                        pattern: 'solid',
+                        fgColor: { argb: 'FF' + CONFIG.colors.alternateRow.replace('#', '') }
+                    }
+                } : dataStyle;
+                
+                Object.assign(cell, rowStyle);
+            });
+            
+            dataRow.height = CONFIG.layout.rowHeight;
         });
 
-        // Style adjustments
-        worksheet.columns.forEach(column => {
-            column.width = 15;
-            column.alignment = { vertical: 'middle', horizontal: 'right' };
+        // Auto-fit columns
+        worksheet.columns.forEach((column) => {
+            let maxLength = 0;
+            column.eachCell({ includeEmpty: false }, (cell) => {
+                const cellValue = cell.value ? cell.value.toString() : '';
+                maxLength = Math.max(maxLength, cellValue.length);
+            });
+            column.width = Math.max(maxLength + 5, 15);
         });
 
         // Generate buffer
@@ -73,93 +137,8 @@ export const generateExcel = async (headers, data, title = 'تقرير') => {
         return buffer;
 
     } catch (error) {
-        console.error('Error generating Excel:', error);
+        console.error('❌ Error generating Excel:', error);
         throw error;
     }
 };
 
-export const generatePDF = async (headers, data, title = 'تقرير') => {
-    try {
-        const tableBody = [
-            // Headers
-            headers.map(header => ({
-                text: header.headerName,
-                style: 'tableHeader',
-                alignment: 'center'
-            })),
-            // Data rows
-            ...data.map((row, index) => 
-                headers.map(header => ({
-                    text: row[header.field]?.toString() || '—',
-                    style: index % 2 === 0 ? 'tableCell' : 'tableCellAlternate',
-                    alignment: 'center'
-                }))
-            )
-        ];
-
-        const docDefinition = {
-            pageSize: 'A4',
-            pageOrientation: 'landscape',
-            pageMargins: [40, 60, 40, 60],
-            
-            defaultStyle: {
-                font: 'Amiri',
-                fontSize: CONFIG.fonts.bodySize,
-                direction: 'rtl'
-            },
-            
-            content: [
-                {
-                    text: title,
-                    style: 'title',
-                    alignment: 'center',
-                    margin: [0, 0, 0, 20]
-                },
-                {
-                    table: {
-                        headerRows: 1,
-                        widths: Array(headers.length).fill('*'),
-                        body: tableBody
-                    },
-                    layout: {
-                        fillColor: (rowIndex) => {
-                            if (rowIndex === 0) return CONFIG.colors.primary;
-                            return rowIndex % 2 === 0 ? CONFIG.colors.alternateRow : null;
-                        }
-                    }
-                }
-            ],
-            
-            styles: {
-                title: {
-                    fontSize: CONFIG.fonts.titleSize,
-                    bold: true,
-                    color: CONFIG.colors.primary
-                },
-                tableHeader: {
-                    fontSize: CONFIG.fonts.headerSize,
-                    bold: true,
-                    color: CONFIG.colors.headerText
-                },
-                tableCell: {
-                    fontSize: CONFIG.fonts.bodySize
-                },
-                tableCellAlternate: {
-                    fontSize: CONFIG.fonts.bodySize
-                }
-            }
-        };
-
-        return new Promise((resolve) => {
-            // Generate PDF as blob
-            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-            pdfDocGenerator.getBuffer((buffer) => {
-                resolve(buffer);
-            });
-        });
-
-    } catch (error) {
-        console.error('Error generating PDF:', error);
-        throw error;
-    }
-};
