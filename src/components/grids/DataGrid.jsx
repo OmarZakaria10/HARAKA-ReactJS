@@ -12,7 +12,7 @@ import {
   ModuleRegistry,
   themeQuartz,
 } from "ag-grid-community";
-import { generateExcel } from '../../services/fileGenerator';
+import { generateExcel } from '../../services/excelGenerator';
 ModuleRegistry.registerModules([AllCommunityModule]);
 const myTheme = themeQuartz.withParams({
   backgroundColor: "#1f2836",
@@ -172,7 +172,7 @@ const DataGrid = ({
 
   // Render
   return (
-    <div className="flex flex-col  h-[80vh]">
+    <div className="flex flex-col  h-[77vh]">
       <div className="flex justify-between h-[4vh] items-center p-2.5">
         {/* Left side buttons */}
         <div className="m-2.5 flex gap-2.5">
