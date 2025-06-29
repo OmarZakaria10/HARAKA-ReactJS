@@ -5,7 +5,7 @@ class Axios {
 
   constructor() {
     this.api = axios.create({
-      baseURL: "http://localhost:4000",
+      baseURL: "https://haraka-asnt.onrender.com",
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

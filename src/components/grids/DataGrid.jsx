@@ -48,12 +48,26 @@ const DataGrid = ({
   const [gridApi, setGridApi] = useState(null);
   const [colDefs] = useState(headers);
 
+  // Helper function to auto-size all columns
+  const autoSizeAllColumns = useCallback(() => {
+    if (gridApi) {
+      const allColumnIds = gridApi.getColumns()?.map(column => column.getColId()) || [];
+      if (allColumnIds.length > 0) {
+        gridApi.autoSizeColumns(allColumnIds);
+      }
+    }
+  }, [gridApi]);
+
   // Grid setup functions
   const onGridReady = (params) => {
     setGridApi(params.api);
-    params.api.sizeColumnsToFit();
-
-    
+    // Auto-size columns when grid is ready
+    setTimeout(() => {
+      const allColumnIds = params.api.getColumns()?.map(column => column.getColId()) || [];
+      if (allColumnIds.length > 0) {
+        params.api.autoSizeColumns(allColumnIds);
+      }
+    }, 100);
   };
 
   const autoSizeStrategy = useMemo(
@@ -80,9 +94,6 @@ const DataGrid = ({
     }
   }, [gridApi, onSelectionChange]);
 
-
-
-
   const onHideClick = useCallback(() => {
     if (gridApi) {
       const selectedRows = gridApi.getSelectedRows();
@@ -92,68 +103,74 @@ const DataGrid = ({
       }
 
       const selectedIds = selectedRows.map((row) => row.id);
-      setRowData((prevRowData) =>
-        prevRowData.filter((row) => !selectedIds.includes(row.id))
-      );
+      setRowData((prevRowData) => {
+        const newData = prevRowData.filter((row) => !selectedIds.includes(row.id));
+        // Auto-size columns after hiding rows
+        setTimeout(() => autoSizeAllColumns(), 50);
+        return newData;
+      });
     }
-  }, [gridApi, labels.selectToHideMessage]);
-    const handleExcelExport = useCallback(async () => {
-        if (gridApi) {
-            try {
-                const visibleColumns = gridApi.getColumns()
-                    .filter(col => col.isVisible())
-                    .map(col => ({
-                        field: col.getColId(),
-                        headerName: col.getColDef().headerName
-                    }));
+  }, [gridApi, labels.selectToHideMessage, autoSizeAllColumns]);
 
-                const rowData = [];
-                gridApi.forEachNodeAfterFilter(node => {
-                    if (node.data) rowData.push(node.data);
-                });
+  const handleExcelExport = useCallback(async () => {
+    if (gridApi) {
+      try {
+        const visibleColumns = gridApi.getColumns()
+          .filter(col => col.isVisible())
+          .map(col => ({
+            field: col.getColId(),
+            headerName: col.getColDef().headerName
+          }));
 
-                const buffer = await generateExcel(visibleColumns, rowData, labels.exportFileName);
-                
-                // Create blob and download
-                const blob = new Blob([buffer], { 
-                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
-                });
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${labels.exportFileName || 'export'}.xlsx`;
-                link.click();
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error('Excel export failed:', error);
-                alert('فشل تصدير ملف Excel');
-            }
-        }
-    }, [gridApi, labels.exportFileName]);
+        const rowData = [];
+        gridApi.forEachNodeAfterFilter(node => {
+          if (node.data) rowData.push(node.data);
+        });
 
- 
+        const buffer = await generateExcel(visibleColumns, rowData, labels.exportFileName);
+        
+        // Create blob and download
+        const blob = new Blob([buffer], { 
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${labels.exportFileName || 'export'}.xlsx`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Excel export failed:', error);
+        alert('فشل تصدير ملف Excel');
+      }
+    }
+  }, [gridApi, labels.exportFileName]);
+
   // Data fetching
   useEffect(() => {
     const fetchItems = async () => {
       try {
         const items = await fetchData();
         setRowData(items);
+        // Auto-size columns after data is loaded
+        setTimeout(() => autoSizeAllColumns(), 100);
       } catch (err) {
         console.error("Failed to fetch data:", err);
-      } finally {
-
-        if (gridApi) {
-          gridApi.sizeColumnsToFit();
-        }
       }
     };
 
     fetchItems();
-  }, [fetchData, updateTrigger]);
+  }, [fetchData, updateTrigger, autoSizeAllColumns]);
+
+  // Auto-size columns when rowData changes
+  useEffect(() => {
+    if (rowData.length > 0) {
+      setTimeout(() => autoSizeAllColumns(), 50);
+    }
+  }, [rowData, autoSizeAllColumns]);
 
   const defaultColDef = useMemo(
     () => ({
-      flex: 1,
       sortable: true,
       filter: true,
       filterParams: {
@@ -166,25 +183,24 @@ const DataGrid = ({
       cellStyle: { textAlign: "right" },
       enableCellTextSelection: true,
       copyable: true,
+      // Remove flex: 1 to allow auto-sizing
     }),
     []
   );
 
   // Render
   return (
-    <div className="flex flex-col  h-[77vh]">
+    <div className="flex flex-col h-[77vh]">
       <div className="flex justify-between h-[4vh] items-center p-2.5">
         {/* Left side buttons */}
         <div className="m-2.5 flex gap-2.5">
           {features.export && (
             <>
-
               <Button
                 onClick={handleExcelExport}
                 title="Excel"
                 className="w-20 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-800 transition-colors text-sm"
               />
-
             </>
           )}
           {features.hideButton && (
@@ -194,6 +210,7 @@ const DataGrid = ({
               className="w-20 px-4 py-2 bg-[rgb(173,177,174)] text-white rounded hover:bg-[rgb(87,90,88)] transition-colors text-sm"
             />
           )}
+
         </div>
 
         {/* Right side buttons/components */}
