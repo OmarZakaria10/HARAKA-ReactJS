@@ -9,10 +9,10 @@ export default function NavbarComponent({ name, onSetWindow, user, onLogout }) {
   const mobileMenuRef = useRef(null);
 
   const menuItems = [
-    { id: "vehicles", label: "كشف الميري الشامل" },
-    { id: "licenses", label: "كشف الرخص" },
-    { id: "expired", label: "الرخص المنتهية" },
     { id: "reports", label: "التقارير" },
+    { id: "expired", label: "الرخص المنتهية" },
+    { id: "licenses", label: "كشف الرخص" },
+    { id: "vehicles", label: "كشف الميري الشامل" },
   ];
 
   useEffect(() => {

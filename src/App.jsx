@@ -109,10 +109,10 @@ function App() {
         paragraph={"جهاز مستقبل مصر"}
       />
 
-      {window === "vehicles" && <VehicleGrid />}
-      {window === "licenses" && <LicensesGrid />}
-      {window === "expired" && <ExpiredLicensesGrid />}
-      {window === "reports" && <ReportsGrid />}
+      {window === "vehicles" && <VehicleGrid user={user} />}
+      {window === "licenses" && <LicensesGrid user={user}/>}
+      {window === "expired" && <ExpiredLicensesGrid user={user}/>}
+      {window === "reports" && <ReportsGrid user={user}/>}
     </div>
   );
 }

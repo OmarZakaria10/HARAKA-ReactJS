@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
-import vehicleHeaders from "../../services/vehicleHeaders";
+import {Headers} from "../../services/vehicleHeaders";
 import { Label } from "flowbite-react";
 
 function ReportsGrid({ direction = "rtl" }) {
@@ -65,7 +65,7 @@ function ReportsGrid({ direction = "rtl" }) {
   }, [selectedSector, selectedAdmin]);
 
   const config = {
-    headers: vehicleHeaders,
+    headers: Headers,
     fetchData,
     labels: {
       exportFileName: "تقرير المركبات.csv",

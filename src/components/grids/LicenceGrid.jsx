@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
 import licensesHeaders from "../../services/licensesHeaders";
-import vehicleHeaders from "../../services/vehicleHeaders";
+import {Headers} from "../../services/vehicleHeaders";
 import Button from "../Button";
 import PopUp from "../PopUp";
 import AddLicenseForm from "../forms/AddLicenseForm";
@@ -91,7 +91,7 @@ const LicensesGrid = ({ direction = "rtl" }) => {
         {selectedItems.length === 1 ? (
           <AssociatedDataForm
             license={selectedItems[0]}
-            headers={vehicleHeaders}
+            headers={Headers}
           />
         ) : (
           <div className="text-xl text-center text-blue-200">

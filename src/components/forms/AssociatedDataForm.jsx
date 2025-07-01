@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Label } from "flowbite-react";
 import { endPoints } from "../../services/endPoints";
-//import LicenseHeaders from "../services/licensesHeaders";
-//import VehicleHeaders from "../services/vehicleHeaders";
+
 
 export default function AssociatedLicenseForm({ vehicle, license, headers }) {
   const [associatedData, setAssociatedData] = useState(null);

@@ -1,6 +1,6 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import Headers from "../../services/vehicleHeaders";
+import {Headers} from "../../services/vehicleHeaders";
 import { endPoints } from "../../services/endPoints";
 import PopUp from "../PopUp";
 import AddLicenseForm from "./AddLicenseForm";

@@ -98,16 +98,6 @@ export default function LoginForm({ onLoginSuccess }) {
               placeholder="ادخل كلمة المرور"
             />
           </div>
-          
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="remember"
-              checked={formData.remember}
-              onChange={handleChange}
-            />
-            <Label htmlFor="remember" value="تذكرني" className="text-white"/>
-          </div>
-          
           <Button
             type="submit"
             className="w-full"

@@ -2,7 +2,7 @@
 import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
-import vehicleHeaders from "../../services/vehicleHeaders";
+import {Headers,LicensesRoleHeaders,GPSRoleHeaders} from "../../services/vehicleHeaders";
 import licensesHeaders from "../../services/licensesHeaders";
 import Button from "../Button";
 import PopUp from "../PopUp";
@@ -10,7 +10,7 @@ import AddVehicleForm from "../forms/AddVehicleForm";
 import UpdateVehicleForm from "../forms/UpdateVehicleForm";
 import AssociatedDataForm from "../forms/AssociatedDataForm";
 
-const VehicleGrid = ({ direction = "rtl" }) => {
+const VehicleGrid = ({ direction = "rtl" , user }) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -44,6 +44,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   const fetchData = useCallback(async () => {
     try {
       const response = await endPoints.getAllVehicles();
+      console.log(user?.role, "User Role");
       return response;
     } catch (error) {
       console.error("Error fetching vehicles:", error);
@@ -52,7 +53,7 @@ const VehicleGrid = ({ direction = "rtl" }) => {
   }, []);
 
   const config = {
-    headers: vehicleHeaders,
+    headers: user?.role === "licenses" ? LicensesRoleHeaders : user?.role === "GPS"? GPSRoleHeaders: Headers,
     fetchData,
     labels: {
       exportFileName: "الميري الشامل.csv",
