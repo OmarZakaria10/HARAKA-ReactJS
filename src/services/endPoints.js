@@ -195,6 +195,84 @@ class Axios {
       throw error;
     }
   }
+
+  async getAllMilitaryLicenses() {
+    try {
+      const response = await this.api.get("/military-licenses/getAllMilitaryLicenses");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createMilitaryLicense(militaryLicenseData) {
+    try {
+      const response = await this.api.post(
+        "/military-licenses/createMilitaryLicense",
+        militaryLicenseData
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMilitaryLicenseById(id) {
+    try {
+      const response = await this.api.get(`/military-licenses/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateMilitaryLicense(id, updateData) {
+    try {
+      const response = await this.api.patch(
+        `/military-licenses/${id}`,
+        updateData
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteMilitaryLicense(id) {
+    try {
+      const response = await this.api.delete(`/military-licenses/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUniqueMilitaryFieldValues() {
+    try {
+      const response = await this.api.get("/military-licenses/getUniqueFieldValues?fields=vehicle_type,vehicle_equipment,allocation,load_capacity,management_method");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMilitaryLicenseByChassisNumber(chassisNumber) {
+    try {
+      const response = await this.api.get(`/military-licenses/byChassisNumber/${chassisNumber}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMilitaryLicenseByVehicleId(vehicleId) {
+    try {
+      const response = await this.api.get(`/military-licenses/byVehicleId/${vehicleId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 // Export a single instance

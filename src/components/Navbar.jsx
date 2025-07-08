@@ -11,6 +11,7 @@ export default function NavbarComponent({ name, onSetWindow, user, onLogout }) {
   const menuItems = [
     { id: "reports", label: "التقارير" },
     { id: "expired", label: "الرخص المنتهية" },
+    { id: "gesh", label: " كشف عربات الجيش" },
     { id: "licenses", label: "كشف الرخص" },
     { id: "vehicles", label: "كشف الميري الشامل" },
   ];

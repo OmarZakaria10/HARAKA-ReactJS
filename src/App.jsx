@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import Heading from "./components/Heading";
 import LicensesGrid from "./components/grids/LicenceGrid";
 import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
+import MilitaryLicenseGrid from "./components/grids/MilitaryLicenseGrid";
 import ReportsGrid from "./components/grids/ReportsGrid";
 import LoginForm from "./components/LoginForm";
 
@@ -99,7 +100,7 @@ function App() {
   return (
     <div className="App">
       <Navbar
-        name={"جهاز مستقبل مصر للتنمية المستدامة"}
+        name={"جهاز مستقبل مصر"}
         onSetWindow={setWindow}
         user={user}
         onLogout={handleLogout}
@@ -113,6 +114,7 @@ function App() {
       {window === "licenses" && <LicensesGrid user={user}/>}
       {window === "expired" && <ExpiredLicensesGrid user={user}/>}
       {window === "reports" && <ReportsGrid user={user}/>}
+      {window === "gesh" &&  <MilitaryLicenseGrid user={user}/> }
     </div>
   );
 }
