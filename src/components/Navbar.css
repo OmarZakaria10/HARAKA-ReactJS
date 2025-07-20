@@ -1,0 +1,103 @@
+/* Navbar dropdown animations and styling */
+.animate-in {
+  animation: slide-in-fade-in 0.2s ease-out forwards;
+}
+
+.slide-in-from-top-2 {
+  transform: translateY(-8px);
+  opacity: 0;
+}
+
+@keyframes slide-in-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Ensure dropdown appears above all other components */
+.navbar-dropdown {
+  z-index: 99999 !important;
+  position: relative;
+}
+
+/* Custom backdrop blur effect */
+.backdrop-blur-enhanced {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Loading spinner enhancement */
+@keyframes enhanced-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.enhanced-spinner {
+  animation: enhanced-spin 1s linear infinite;
+}
+
+/* Role badge styling */
+.role-badge {
+  background: linear-gradient(135deg, #1c64f2 0%, #3b82f6 100%);
+  box-shadow: 0 2px 4px rgba(28, 100, 242, 0.2);
+}
+
+/* Connection status indicator */
+@keyframes pulse-green {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-online {
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+/* Hover effects for buttons */
+.nav-button-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-button-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile menu specific styling */
+.mobile-menu-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-menu-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.mobile-menu-item:hover::before {
+  left: 100%;
+}

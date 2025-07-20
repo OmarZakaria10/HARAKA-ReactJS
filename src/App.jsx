@@ -1,16 +1,20 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import VehicleGrid from "./components/grids/VehicleGrid";
-import Navbar from "./components/Navbar";
-import Heading from "./components/Heading";
-import LicensesGrid from "./components/grids/LicenceGrid";
-import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
-import MilitaryLicenseGrid from "./components/grids/MilitaryLicenseGrid";
-import ReportsGrid from "./components/grids/ReportsGrid";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import MainLayout from "./components/MainLayout";
+import VehiclesPage from "./pages/VehiclesPage";
+import LicensesPage from "./pages/LicensesPage";
+import ExpiredLicensesPage from "./pages/ExpiredLicensesPage";
+import MilitaryLicensesPage from "./pages/MilitaryLicensesPage";
+import ReportsPage from "./pages/ReportsPage";
 import LoginForm from "./components/LoginForm";
 
 function App() {
-  const [window, setWindow] = useState("vehicles");
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,13 +48,13 @@ function App() {
               {
                 method: "GET",
                 headers: {
-                  "Authorization": `Bearer ${token}`,
+                  Authorization: `Bearer ${token}`,
                   "Content-Type": "application/json",
                 },
                 credentials: "include",
               }
             );
-            
+
             if (tokenResponse.ok) {
               const tokenData = await tokenResponse.json();
               setUser(tokenData.data.user);
@@ -99,22 +103,23 @@ function App() {
 
   return (
     <div className="App">
-      <Navbar
-        name={"جهاز مستقبل مصر"}
-        onSetWindow={setWindow}
-        user={user}
-        onLogout={handleLogout}
-      />
-      <Heading
-        header={"إدارة الحركة ومركز الصيانة"}
-        paragraph={"جهاز مستقبل مصر"}
-      />
-
-      {window === "vehicles" && <VehicleGrid user={user} />}
-      {window === "licenses" && <LicensesGrid user={user}/>}
-      {window === "expired" && <ExpiredLicensesGrid user={user}/>}
-      {window === "reports" && <ReportsGrid user={user}/>}
-      {window === "gesh" &&  <MilitaryLicenseGrid user={user}/> }
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={<MainLayout user={user} onLogout={handleLogout} />}
+          >
+            <Route index element={<Navigate to="/vehicles" replace />} />
+            <Route path="vehicles" element={<VehiclesPage />} />
+            <Route path="licenses" element={<LicensesPage />} />
+            <Route path="expired" element={<ExpiredLicensesPage />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="gesh" element={<MilitaryLicensesPage />} />
+            {/* Redirect any unknown routes to vehicles */}
+            <Route path="*" element={<Navigate to="/vehicles" replace />} />
+          </Route>
+        </Routes>
+      </Router>
     </div>
   );
 }

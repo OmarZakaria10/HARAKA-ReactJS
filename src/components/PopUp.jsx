@@ -1,9 +1,10 @@
-import { Button } from "flowbite-react";
 import { useRef } from "react";
 import CustomModal from "./CustomModal";
+import CustomButton from "./CustomButton";
 
 export default function PopUp({
-  button =true,
+  button = true,
+  disabled = false,
   children,
   title,
   buttonTitle,
@@ -14,17 +15,20 @@ export default function PopUp({
 
   return (
     <>
-      {button && <Button onClick={() => setAddModal(true)}>{buttonTitle}</Button>}
+      <CustomButton
+        onClick={() => !disabled && setAddModal(true)}
+        variant="primary"
+        size="sm"
+        disabled={disabled}
+      >
+        {buttonTitle}
+      </CustomButton>
       <CustomModal
         isOpen={AddModal}
         onClose={() => setAddModal(false)}
         initialFocus={firstInputRef}
         title={title}
       >
-        {/* <AddVehicleForm
-          onSubmitSuccess={handleSubmitSuccess}
-          onCancel={() => setOpenModal(false)}
-        /> */}
         {children}
       </CustomModal>
     </>

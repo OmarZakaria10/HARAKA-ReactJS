@@ -3,8 +3,8 @@ import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
 import licensesHeaders from "../../services/licensesHeaders";
-import {Headers} from "../../services/vehicleHeaders";
-import Button from "../Button";
+import { Headers } from "../../services/vehicleHeaders";
+import CustomButton from "../CustomButton";
 import PopUp from "../PopUp";
 import AddLicenseForm from "../forms/AddLicenseForm";
 import UpdateLicenseForm from "../forms/UpdateLicenseForm";
@@ -71,67 +71,70 @@ const LicensesGrid = ({ direction = "rtl" }) => {
       config={config}
       onSelectionChange={handleSelectionChange}
     >
-      <div className="flex items-center gap-2.5">
-
-        <Button
-          onClick={handleDelete}
-          title="حذف"
-          className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-          disabled={selectedItems.length === 0}
-        />
-
-      </div>
-
-      <PopUp
-        AddModal={showAssociatedModal}
-        setAddModal={setShowAssociatedModal}
-        title="معلومات المركبة"
-        buttonTitle="عرض المركبة"
-      >
-        {selectedItems.length === 1 ? (
-          <AssociatedDataForm
-            license={selectedItems[0]}
-            headers={Headers}
-          />
-        ) : (
-          <div className="text-xl text-center text-blue-200">
-            الرجاء اختيار رخصة واحدة لعرض مركبتها
-          </div>
-        )}
-      </PopUp>
-
-      <PopUp
-        AddModal={showUpdateModal}
-        setAddModal={setShowUpdateModal}
-        title="تعديل رخصة"
-        buttonTitle="تعديل"
-      >
-        {selectedItems.length === 1 && (
-          <UpdateLicenseForm
-            license={selectedItems[0]}
+      <div className="flex items-center gap-3">
+        {/* Add Button */}
+        <PopUp
+          AddModal={showAddModal}
+          setAddModal={setShowAddModal}
+          title="إضافة رخصة جديدة"
+          buttonTitle="إضافة"
+          disabled={false}
+        >
+          <AddLicenseForm
             onSubmitSuccess={() => {
-              setShowUpdateModal(false);
+              setShowAddModal(false);
               setUpdateTrigger((prev) => prev + 1);
             }}
-            onCancel={() => setShowUpdateModal(false)}
+            onCancel={() => setShowAddModal(false)}
           />
-        )}
-      </PopUp>
+        </PopUp>
 
-      <PopUp
-        AddModal={showAddModal}
-        setAddModal={setShowAddModal}
-        title="إضافة رخصة جديدة"
-        buttonTitle="إضافة"
-      >
-        <AddLicenseForm
-          onSubmitSuccess={() => {
-            setShowAddModal(false);
-            setUpdateTrigger((prev) => prev + 1);
-          }}
-          onCancel={() => setShowAddModal(false)}
-        />
-      </PopUp>
+        {/* Edit Button */}
+        <PopUp
+          AddModal={showUpdateModal}
+          setAddModal={setShowUpdateModal}
+          title="تعديل رخصة"
+          buttonTitle="تعديل"
+          disabled={selectedItems.length !== 1}
+        >
+          {selectedItems.length === 1 && (
+            <UpdateLicenseForm
+              license={selectedItems[0]}
+              onSubmitSuccess={() => {
+                setShowUpdateModal(false);
+                setUpdateTrigger((prev) => prev + 1);
+              }}
+              onCancel={() => setShowUpdateModal(false)}
+            />
+          )}
+        </PopUp>
+
+        {/* View Vehicle Button */}
+        <PopUp
+          AddModal={showAssociatedModal}
+          setAddModal={setShowAssociatedModal}
+          title="معلومات المركبة"
+          buttonTitle="عرض المركبة"
+          disabled={selectedItems.length !== 1}
+        >
+          {selectedItems.length === 1 ? (
+            <AssociatedDataForm license={selectedItems[0]} headers={Headers} />
+          ) : (
+            <div className="text-xl text-center text-slate-300">
+              الرجاء اختيار رخصة واحدة لعرض مركبتها
+            </div>
+          )}
+        </PopUp>
+
+        {/* Delete Button */}
+        <CustomButton
+          onClick={handleDelete}
+          disabled={selectedItems.length === 0}
+          variant="danger"
+        >
+          حذف المحدد
+        </CustomButton>
+      </div>
     </DataGrid>
   );
 };

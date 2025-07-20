@@ -3,12 +3,12 @@ import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
 import militaryLicenseHeaders from "../../services/militaryLicensesHeaders";
-import Button from "../Button";
+import CustomButton from "../CustomButton";
 import PopUp from "../PopUp";
 import AddMilitaryLicenseForm from "../forms/AddMilitaryLIcenseForm";
 import UpdateMilitaryLicenseForm from "../forms/UpdateMilitaryLicenseForm";
 
-const MilitaryLicenseGrid = ({ direction = "rtl" , user }) => {
+const MilitaryLicenseGrid = ({ direction = "rtl", user }) => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -24,7 +24,9 @@ const MilitaryLicenseGrid = ({ direction = "rtl" , user }) => {
       return;
     }
 
-    const isConfirmed = window.confirm("هل أنت متأكد من حذف الرخص العسكرية المحددة؟");
+    const isConfirmed = window.confirm(
+      "هل أنت متأكد من حذف الرخص العسكرية المحددة؟"
+    );
     if (!isConfirmed) return;
 
     try {
@@ -68,45 +70,53 @@ const MilitaryLicenseGrid = ({ direction = "rtl" , user }) => {
       config={config}
       onSelectionChange={handleSelectionChange}
     >
-      <div className="flex items-center gap-2.5">
-        <Button
-          onClick={handleDelete}
-          title="حذف"
-          className="w-20 h-10 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-800 transition-colors text-sm"
-          disabled={selectedItems.length === 0}
-        />
-      </div>
-      <PopUp
-        AddModal={showAddModal}
-        setAddModal={setShowAddModal}
-        title="إضافة رخصة عسكرية جديدة"
-        buttonTitle="إضافة"
-      >
-        <AddMilitaryLicenseForm
-          onSubmitSuccess={() => {
-            setShowAddModal(false);
-            setUpdateTrigger((prev) => prev + 1);
-          }}
-          onCancel={() => setShowAddModal(false)}
-        />
-      </PopUp>
-      <PopUp
-        AddModal={showUpdateModal}
-        setAddModal={setShowUpdateModal}
-        title="تعديل رخصة عسكرية"
-        buttonTitle="تعديل"
-      >
-        {selectedItems.length === 1 && (
-          <UpdateMilitaryLicenseForm
-            license={selectedItems[0]}
+      <div className="flex items-center gap-3">
+        {/* Add Button */}
+        <PopUp
+          AddModal={showAddModal}
+          setAddModal={setShowAddModal}
+          title="إضافة رخصة عسكرية جديدة"
+          buttonTitle="إضافة"
+          disabled={false}
+        >
+          <AddMilitaryLicenseForm
             onSubmitSuccess={() => {
-              setShowUpdateModal(false);
+              setShowAddModal(false);
               setUpdateTrigger((prev) => prev + 1);
             }}
-            onCancel={() => setShowUpdateModal(false)}
+            onCancel={() => setShowAddModal(false)}
           />
-        )}
-      </PopUp>
+        </PopUp>
+
+        {/* Edit Button */}
+        <PopUp
+          AddModal={showUpdateModal}
+          setAddModal={setShowUpdateModal}
+          title="تعديل رخصة عسكرية"
+          buttonTitle="تعديل"
+          disabled={selectedItems.length !== 1}
+        >
+          {selectedItems.length === 1 && (
+            <UpdateMilitaryLicenseForm
+              license={selectedItems[0]}
+              onSubmitSuccess={() => {
+                setShowUpdateModal(false);
+                setUpdateTrigger((prev) => prev + 1);
+              }}
+              onCancel={() => setShowUpdateModal(false)}
+            />
+          )}
+        </PopUp>
+
+        {/* Delete Button */}
+        <CustomButton
+          onClick={handleDelete}
+          disabled={selectedItems.length === 0}
+          variant="danger"
+        >
+          حذف المحدد
+        </CustomButton>
+      </div>
     </DataGrid>
   );
 };
