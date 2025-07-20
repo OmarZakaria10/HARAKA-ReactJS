@@ -123,9 +123,7 @@ function App() {
         currentWindow={currentWindow}
         setCurrentWindow={setCurrentWindow}
       />
-      <main className="main-content">
-        {renderCurrentWindow()}
-      </main>
+      <main className="main-content">{renderCurrentWindow()}</main>
     </div>
   );
 }

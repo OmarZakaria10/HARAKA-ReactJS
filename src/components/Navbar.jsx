@@ -2,7 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import logo from "../assets/FOE.png";
 import "./Navbar.css";
 
-export default function NavbarComponent({ name, user, onLogout, currentWindow, setCurrentWindow }) {
+export default function NavbarComponent({
+  name,
+  user,
+  onLogout,
+  currentWindow,
+  setCurrentWindow,
+}) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -26,14 +32,14 @@ export default function NavbarComponent({ name, user, onLogout, currentWindow, s
   // Navigation function
   const handleNavigation = async (windowId) => {
     if (currentWindow === windowId || isLoading) return;
-    
+
     setIsLoading(true);
     setLoadingRoute(windowId);
-    
+
     // Close menus
     setIsUserMenuOpen(false);
     setIsMobileMenuOpen(false);
-    
+
     // Simulate loading delay for better UX
     setTimeout(() => {
       setCurrentWindow(windowId);
