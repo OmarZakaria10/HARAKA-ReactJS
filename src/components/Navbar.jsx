@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/FOE.png";
 import "./Navbar.css";
 
-export default function NavbarComponent({ name, user, onLogout }) {
+export default function NavbarComponent({ name, user, onLogout, currentWindow, setCurrentWindow }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -11,24 +10,37 @@ export default function NavbarComponent({ name, user, onLogout }) {
   const [loadingRoute, setLoadingRoute] = useState(null);
   const userDropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const menuItems = [
-    { id: "reports", path: "/reports", label: "التقارير", icon: "📊" },
-    { id: "expired", path: "/expired", label: "الرخص المنتهية", icon: "⚠️" },
-    { id: "gesh", path: "/gesh", label: "كشف عربات الجيش", icon: "🚗" },
-    { id: "licenses", path: "/licenses", label: "كشف الرخص", icon: "📄" },
+    { id: "reports", label: "التقارير", icon: "📊" },
+    { id: "expired", label: "الرخص المنتهية", icon: "⚠️" },
+    { id: "gesh", label: "كشف عربات الجيش", icon: "🚗" },
+    { id: "licenses", label: "كشف الرخص", icon: "📄" },
     {
       id: "vehicles",
-      path: "/vehicles",
       label: "كشف الميري الشامل",
       icon: "🚛",
     },
   ];
 
-  // Get current active route
-  const currentPath = location.pathname;
+  // Navigation function
+  const handleNavigation = async (windowId) => {
+    if (currentWindow === windowId || isLoading) return;
+    
+    setIsLoading(true);
+    setLoadingRoute(windowId);
+    
+    // Close menus
+    setIsUserMenuOpen(false);
+    setIsMobileMenuOpen(false);
+    
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setCurrentWindow(windowId);
+      setIsLoading(false);
+      setLoadingRoute(null);
+    }, 300);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -50,33 +62,6 @@ export default function NavbarComponent({ name, user, onLogout }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleNavigation = async (path) => {
-    if (isLoading) return; // Prevent multiple clicks
-
-    setIsLoading(true);
-    setLoadingRoute(path);
-
-    // Close menus
-    setIsUserMenuOpen(false);
-    setIsMobileMenuOpen(false);
-
-    // Simulate realistic loading time based on the complexity of the page
-    const loadingTimes = {
-      "/vehicles": 800, // Most complex page
-      "/licenses": 600,
-      "/reports": 700,
-      "/expired": 500,
-      "/gesh": 600,
-    };
-
-    const loadingTime = loadingTimes[path] || 500;
-
-    setTimeout(() => {
-      navigate(path);
-      setIsLoading(false);
-      setLoadingRoute(null);
-    }, loadingTime);
-  };
   const handleLogout = async () => {
     if (isLoggingOut) return;
 
@@ -178,12 +163,12 @@ export default function NavbarComponent({ name, user, onLogout }) {
               {menuItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => handleNavigation(item.path)}
+                  onClick={() => handleNavigation(item.id)}
                   disabled={isLoading || isLoggingOut}
                   className={`
                   relative px-4 py-3 text-sm xl:text-base font-medium rounded-t-lg transition-all duration-300 whitespace-nowrap group
                   ${
-                    currentPath === item.path
+                    currentWindow === item.id
                       ? "text-white bg-slate-700/30"
                       : "text-slate-300 hover:text-white hover:bg-slate-700/20"
                   }
@@ -209,7 +194,7 @@ export default function NavbarComponent({ name, user, onLogout }) {
                     className={`
                   absolute bottom-0 left-0 right-0 h-0.5 bg-[#1C64F2] transition-all duration-300 rounded-full
                   ${
-                    currentPath === item.path
+                    currentWindow === item.id
                       ? "opacity-100 scale-x-100 shadow-lg shadow-[#1C64F2]/50"
                       : "opacity-0 scale-x-0 group-hover:opacity-60 group-hover:scale-x-75"
                   }
@@ -220,7 +205,7 @@ export default function NavbarComponent({ name, user, onLogout }) {
                     className={`
                   absolute inset-0 bg-gradient-to-r from-transparent via-[#1C64F2]/5 to-transparent 
                   rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300
-                  ${currentPath === item.path ? "opacity-20" : ""}
+                  ${currentWindow === item.id ? "opacity-20" : ""}
                 `}
                   ></div>
                 </button>
@@ -420,12 +405,12 @@ export default function NavbarComponent({ name, user, onLogout }) {
                       {menuItems.map((item) => (
                         <button
                           key={item.id}
-                          onClick={() => handleNavigation(item.path)}
+                          onClick={() => handleNavigation(item.id)}
                           disabled={isLoading}
                           className={`
                           w-full relative flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 mb-1 group
                           ${
-                            currentPath === item.path
+                            currentWindow === item.id
                               ? "text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-700/30"
                               : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50"
                           }
@@ -438,7 +423,7 @@ export default function NavbarComponent({ name, user, onLogout }) {
                         >
                           <div
                             className={`w-8 h-8 rounded-lg flex items-center justify-center text-lg transition-all duration-200 ${
-                              currentPath === item.path
+                              currentWindow === item.id
                                 ? "bg-[#1C64F2] text-white shadow-lg shadow-[#1C64F2]/25"
                                 : "bg-slate-100 dark:bg-slate-700 group-hover:bg-[#1C64F2]/10 group-hover:text-[#1C64F2]"
                             }`}
@@ -456,7 +441,7 @@ export default function NavbarComponent({ name, user, onLogout }) {
                             className={`
                           absolute bottom-0 left-3 right-3 h-0.5 bg-[#1C64F2] transition-all duration-300 rounded-full
                           ${
-                            currentPath === item.path
+                            currentWindow === item.id
                               ? "opacity-100 scale-x-100"
                               : "opacity-0 scale-x-0"
                           }

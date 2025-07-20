@@ -1,22 +1,17 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import MainLayout from "./components/MainLayout";
-import VehiclesPage from "./pages/VehiclesPage";
-import LicensesPage from "./pages/LicensesPage";
-import ExpiredLicensesPage from "./pages/ExpiredLicensesPage";
-import MilitaryLicensesPage from "./pages/MilitaryLicensesPage";
-import ReportsPage from "./pages/ReportsPage";
 import LoginForm from "./components/LoginForm";
+import Navbar from "./components/Navbar";
+import VehicleGrid from "./components/grids/VehicleGrid";
+import LicenceGrid from "./components/grids/LicenceGrid";
+import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
+import MilitaryLicenseGrid from "./components/grids/MilitaryLicenseGrid";
+import ReportsGrid from "./components/grids/ReportsGrid";
 
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentWindow, setCurrentWindow] = useState("vehicles"); // State for current view
 
   // Check authentication status on mount
   useEffect(() => {
@@ -89,6 +84,24 @@ function App() {
     localStorage.removeItem("token");
   };
 
+  // Function to render current window content
+  const renderCurrentWindow = () => {
+    switch (currentWindow) {
+      case "vehicles":
+        return <VehicleGrid user={user} />;
+      case "licenses":
+        return <LicenceGrid user={user} />;
+      case "expired":
+        return <ExpiredLicensesGrid user={user} />;
+      case "gesh":
+        return <MilitaryLicenseGrid user={user} />;
+      case "reports":
+        return <ReportsGrid user={user} />;
+      default:
+        return <VehicleGrid user={user} />;
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
@@ -103,23 +116,16 @@ function App() {
 
   return (
     <div className="App">
-      <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={<MainLayout user={user} onLogout={handleLogout} />}
-          >
-            <Route index element={<Navigate to="/vehicles" replace />} />
-            <Route path="vehicles" element={<VehiclesPage />} />
-            <Route path="licenses" element={<LicensesPage />} />
-            <Route path="expired" element={<ExpiredLicensesPage />} />
-            <Route path="reports" element={<ReportsPage />} />
-            <Route path="gesh" element={<MilitaryLicensesPage />} />
-            {/* Redirect any unknown routes to vehicles */}
-            <Route path="*" element={<Navigate to="/vehicles" replace />} />
-          </Route>
-        </Routes>
-      </Router>
+      <Navbar
+        name={"جهاز مستقبل مصر"}
+        user={user}
+        onLogout={handleLogout}
+        currentWindow={currentWindow}
+        setCurrentWindow={setCurrentWindow}
+      />
+      <main className="main-content">
+        {renderCurrentWindow()}
+      </main>
     </div>
   );
 }
