@@ -1,6 +1,5 @@
-import { Button, Checkbox, Label, TextInput } from "flowbite-react";
+import { Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function LoginForm({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
