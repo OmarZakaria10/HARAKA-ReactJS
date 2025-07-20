@@ -6,16 +6,16 @@ export default function LoginForm({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    remember: false
+    remember: false,
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [id]: type === 'checkbox' ? checked : value
+      [id]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -25,17 +25,20 @@ export default function LoginForm({ onLoginSuccess }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://haraka-asnt.onrender.com/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
-        credentials: 'include' // Important for receiving cookies
-      });
+      const response = await fetch(
+        "https://haraka-asnt.onrender.com/users/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: formData.username,
+            password: formData.password,
+          }),
+          credentials: "include", // Important for receiving cookies
+        }
+      );
 
       const data = await response.json();
 
@@ -56,24 +59,34 @@ export default function LoginForm({ onLoginSuccess }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900 px-6">
-      <div className="w-full max-w-md space-y-8 bg-gray-800 p-8 rounded-lg shadow-lg">
-        <div>
-          <h2 className="text-center text-3xl font-bold tracking-tight text-white">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md sm:max-w-lg space-y-6 sm:space-y-8 bg-gray-800 p-6 sm:p-8 lg:p-10 rounded-xl shadow-2xl border border-gray-700 animate-fade-in">
+        <div className="text-center">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-shadow">
             تسجيل الدخول
           </h2>
+          <p className="mt-2 text-sm sm:text-base text-gray-400">
+            أدخل بياناتك للوصول إلى النظام
+          </p>
         </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+
+        <form
+          className="mt-6 sm:mt-8 space-y-4 sm:space-y-6"
+          onSubmit={handleSubmit}
+        >
           {error && (
-            <div className="text-red-500 text-center bg-red-100 border border-red-400 rounded p-2">
+            <div className="text-red-400 text-center bg-red-900/20 border border-red-400/30 rounded-lg p-3 text-sm sm:text-base animate-slide-in">
               {error}
             </div>
           )}
-          
+
           <div>
             <div className="mb-2 block">
-              <Label htmlFor="username" value="اسم المستخدم" className="text-white"/>
+              <Label
+                htmlFor="username"
+                value="اسم المستخدم"
+                className="text-white text-sm sm:text-base"
+              />
             </div>
             <TextInput
               id="username"
@@ -82,12 +95,18 @@ export default function LoginForm({ onLoginSuccess }) {
               onChange={handleChange}
               required
               placeholder="ادخل اسم المستخدم"
+              className="input-field"
+              sizing="lg"
             />
           </div>
-          
+
           <div>
             <div className="mb-2 block">
-              <Label htmlFor="password" value="كلمة المرور" className="text-white"/>
+              <Label
+                htmlFor="password"
+                value="كلمة المرور"
+                className="text-white text-sm sm:text-base"
+              />
             </div>
             <TextInput
               id="password"
@@ -96,12 +115,16 @@ export default function LoginForm({ onLoginSuccess }) {
               onChange={handleChange}
               required
               placeholder="ادخل كلمة المرور"
+              className="input-field"
+              sizing="lg"
             />
           </div>
+
           <Button
             type="submit"
-            className="w-full"
+            className="w-full btn-primary text-base sm:text-lg py-3 sm:py-4"
             disabled={isLoading}
+            size="lg"
           >
             {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
           </Button>

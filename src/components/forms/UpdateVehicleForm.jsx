@@ -1,6 +1,6 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import {Headers} from "../../services/vehicleHeaders";
+import { Headers } from "../../services/vehicleHeaders";
 import { endPoints } from "../../services/endPoints";
 import PopUp from "../PopUp";
 import AddLicenseForm from "./AddLicenseForm";
@@ -55,7 +55,7 @@ export default function UpdateVehicleForm({
   const handleUpdateVehicle = async (vehicleData) => {
     try {
       const response = await endPoints.updateVehicle(vehicle.id, vehicleData);
-      
+
       // Check if malaky plate was added during update
       if (!vehicle.plate_number_malaky && vehicleData.plate_number_malaky) {
         setUpdatedVehicleData(response.data.vehicle);
@@ -80,12 +80,15 @@ export default function UpdateVehicleForm({
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {Headers.map((header, index) => (
-            <div key={header.field}>
-              <div className="mb-2 block text-right">
-                <Label htmlFor={header.field}>
+            <div key={header.field} className="space-y-2">
+              <div className="block text-right">
+                <Label
+                  htmlFor={header.field}
+                  className="text-sm sm:text-base font-medium"
+                >
                   {header.headerName}
                   {requiredFields.includes(header.field) && (
                     <span className="text-red-500 mr-1">*</span>
@@ -93,7 +96,7 @@ export default function UpdateVehicleForm({
                 </Label>
               </div>
               <input
-                className="w-full text-right rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                className="input-field text-sm sm:text-base"
                 dir="rtl"
                 id={header.field}
                 ref={index === 0 ? firstInputRef : null}
@@ -114,11 +117,11 @@ export default function UpdateVehicleForm({
             </div>
           ))}
         </div>
-        <div className="w-full flex justify-end gap-4 mt-4">
-          <Button color="gray" onClick={onCancel}>
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 pt-4 sm:pt-6">
+          <Button color="gray" onClick={onCancel} className="w-full sm:w-auto">
             إلغاء
           </Button>
-          <Button type="submit" color="blue">
+          <Button type="submit" color="blue" className="w-full sm:w-auto">
             تعديل مركبة
           </Button>
         </div>

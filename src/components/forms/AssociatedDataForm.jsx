@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Label } from "flowbite-react";
 import { endPoints } from "../../services/endPoints";
 
-
 export default function AssociatedLicenseForm({ vehicle, license, headers }) {
   const [associatedData, setAssociatedData] = useState(null);
   const [dataType, setDataType] = useState(null);
@@ -62,22 +61,26 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="p-4 rounded-2xl bg-gray-800 shadow-lg shadow-blue-300/50">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="p-4 sm:p-6 rounded-xl bg-gray-800 shadow-xl border border-gray-700">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {headers.map((header) => (
-            <div key={header.field} className="mb-2">
-              <div className="mb-2 block text-right">
-                <Label htmlFor={header.field} className="text-gray-400 text-md">
+            <div key={header.field} className="space-y-2">
+              <div className="block text-right">
+                <Label
+                  htmlFor={header.field}
+                  className="text-gray-300 text-sm sm:text-base font-medium"
+                >
                   {header.headerName}
                 </Label>
               </div>
               <input
-                className="w-full text-right rounded-2xl border border-gray-600 bg-gray-700 p-2.5 text-white text-md"
+                className="w-full text-right rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-white text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 dir="rtl"
                 id={header.field}
                 value={associatedData[header.field] || "غير متوفر"}
                 disabled
+                readOnly
               />
             </div>
           ))}
