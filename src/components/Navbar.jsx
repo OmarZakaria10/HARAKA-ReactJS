@@ -64,8 +64,23 @@ export default function NavbarComponent({
       }
     };
 
+    const handleGlobalKeyDown = (event) => {
+      // Prevent default Ctrl+F to let custom search components handle it
+      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
+        // Only prevent if we're not in an input field already
+        if (!["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleGlobalKeyDown, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleGlobalKeyDown, true);
+    };
   }, []);
 
   const handleLogout = async () => {

@@ -303,6 +303,7 @@ const DataGrid = ({
         event.preventDefault();
         event.stopPropagation();
         searchInputRef.current?.focus();
+        searchInputRef.current?.select(); // Select all text for better UX
       }
 
       // Enter to execute search when search input is focused
@@ -330,8 +331,8 @@ const DataGrid = ({
     };
 
     // Add event listener to document to capture global Ctrl+F
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true); // Use capture phase
+    return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [
     executeSearch,
     handleSearchNext,
