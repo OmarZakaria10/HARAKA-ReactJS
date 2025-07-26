@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import logo from "../assets/FOE.png";
+import LoadingWave from "./LoadingWave";
 import "./Navbar.css";
 
 export default function NavbarComponent({
@@ -123,23 +124,11 @@ export default function NavbarComponent({
     }, 100);
   };
 
-  const LoadingSpinner = () => (
-    <div className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-  );
-
   const NavigationLoadingOverlay = () =>
     isLoading && (
       <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[10000]">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-600 p-6 flex items-center gap-4 min-w-[280px]">
-          <div className="w-8 h-8 border-3 border-[#1C64F2] border-t-transparent rounded-full animate-spin"></div>
-          <div className="text-right">
-            <div className="text-base font-semibold text-slate-900 dark:text-white">
-              جاري التحميل...
-            </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              انتظر قليلاً
-            </div>
-          </div>
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-600 p-6 flex items-center justify-center min-w-[320px]">
+          <LoadingWave size="md" color="#1C64F2" message="جاري التحميل..." />
         </div>
       </div>
     );
@@ -207,7 +196,7 @@ export default function NavbarComponent({
                     </span>
                     {item.label}
                     {isLoading && loadingRoute === item.path && (
-                      <LoadingSpinner />
+                      <LoadingWave size="sm" color="#ffffff" message="" />
                     )}
                   </span>
                   {/* Active underline */}
@@ -269,7 +258,7 @@ export default function NavbarComponent({
                 `}
                 >
                   {isLoggingOut ? (
-                    <LoadingSpinner />
+                    <LoadingWave size="sm" color="#ffffff" message="" />
                   ) : (
                     <>
                       {user?.username?.[0]?.toUpperCase() || "U"}
@@ -455,7 +444,7 @@ export default function NavbarComponent({
                             {item.label}
                           </span>
                           {isLoading && loadingRoute === item.path && (
-                            <LoadingSpinner />
+                            <LoadingWave size="sm" color="#1C64F2" message="" />
                           )}
                           {/* Active underline for mobile */}
                           <div
@@ -508,11 +497,12 @@ export default function NavbarComponent({
         {/* Loading Overlay */}
         {isLoggingOut && (
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="flex items-center gap-3 px-6 py-4 bg-slate-800/90 rounded-xl border border-slate-600/50">
-              <LoadingSpinner />
-              <span className="text-white font-medium">
-                جاري تسجيل الخروج...
-              </span>
+            <div className="flex items-center justify-center px-6 py-4 bg-slate-800/90 rounded-xl border border-slate-600/50">
+              <LoadingWave
+                size="sm"
+                color="#ffffff"
+                message="جاري تسجيل الخروج..."
+              />
             </div>
           </div>
         )}

@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { AgGridReact } from "ag-grid-react";
 import CustomButton from "../CustomButton";
+import LoadingWave from "../LoadingWave";
 import {
   AllCommunityModule,
   ModuleRegistry,
@@ -48,6 +49,8 @@ const DataGrid = ({
 
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState({ current: 0, total: 0 });
   const searchInputRef = useRef(null);
@@ -56,17 +59,21 @@ const DataGrid = ({
   // Create column definitions with index column
   const columnDefs = useMemo(() => {
     const indexColumn = {
-      headerName: "",
+      headerName: "م",
       field: "rowIndex",
       pinned: "right", // Pin to right for RTL layout
       sortable: false,
       filter: false,
-      resizable: true,
+      resizable: false,
       editable: false,
+      width: 50,
+      maxWidth: 60,
+      minWidth: 40,
       cellStyle: {
         textAlign: "center",
         fontWeight: "bold",
         backgroundColor: "#2a3441",
+        fontSize: "12px",
       },
       valueGetter: (params) => {
         return params.node.rowIndex + 1;
@@ -133,6 +140,8 @@ const DataGrid = ({
     if (!gridApi) return;
 
     try {
+      setIsExporting(true);
+
       // Include index column in export
       const indexColumn = {
         field: "rowIndex",
@@ -181,6 +190,8 @@ const DataGrid = ({
     } catch (error) {
       console.error("Excel export failed:", error);
       alert("فشل تصدير ملف Excel");
+    } finally {
+      setIsExporting(false);
     }
   }, [gridApi, labels.exportFileName]);
 
@@ -343,10 +354,13 @@ const DataGrid = ({
   useEffect(() => {
     const fetchItems = async () => {
       try {
+        setIsLoading(true);
         const items = await fetchData();
         setRowData(items);
       } catch (err) {
         console.error("Failed to fetch data:", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -376,9 +390,14 @@ const DataGrid = ({
         closeOnApply: true,
       },
       resizable: true,
-      minWidth: 20,
+      minWidth: 60,
+      maxWidth: 250,
       cellStyle: (params) => {
-        const style = { textAlign: "right" };
+        const style = {
+          textAlign: "right",
+          fontSize: "13px",
+          padding: "4px 8px",
+        };
 
         // Highlight matching cells
         if (searchTerm && searchResults.matchingCells) {
@@ -407,6 +426,9 @@ const DataGrid = ({
       editable: true,
       enableCellTextSelection: true,
       copyable: true,
+      flex: 1,
+      wrapText: false,
+      autoHeight: false,
     }),
     [searchTerm, searchResults]
   );
@@ -420,23 +442,98 @@ const DataGrid = ({
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-120px)] bg-slate-50 dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700"
+      className="flex flex-col h-[calc(100vh-60px)] sm:h-[calc(100vh-80px)] md:h-[calc(100vh-120px)] bg-slate-50 dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-full overflow-hidden"
       ref={containerRef}
       tabIndex={0}
     >
       {/* Enhanced Modern Toolbar */}
-      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 rounded-t-xl">
-        <div className="flex justify-between items-center px-6 py-4">
-          {/* Left side - Action Buttons */}
-          <div className="flex items-center gap-3">
-            {features.export && (
-              <CustomButton
-                onClick={handleExcelExport}
-                variant="success"
-                size="sm"
-              >
+      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 rounded-t-xl flex-shrink-0">
+        {/* Mobile Layout */}
+        <div className="block md:hidden px-3 py-2 space-y-2">
+          {/* Single Row Layout - Everything in one line */}
+          <div className="flex items-center gap-2 w-full">
+            {/* Action Buttons - Compact */}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {features.export && (
+                <CustomButton
+                  onClick={handleExcelExport}
+                  variant="success"
+                  size="sm"
+                  disabled={isExporting}
+                  className="text-xs px-2 py-1.5 whitespace-nowrap"
+                >
+                  {isExporting ? (
+                    <LoadingWave
+                      size="sm"
+                      color="#ffffff"
+                      className="scale-75"
+                    />
+                  ) : (
+                    <>
+                      <svg
+                        className="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </>
+                  )}
+                </CustomButton>
+              )}
+
+              {features.hideButton && (
+                <CustomButton
+                  onClick={onHideClick}
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs px-2 py-1.5 whitespace-nowrap"
+                >
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                    />
+                  </svg>
+                </CustomButton>
+              )}
+
+              {/* Additional Controls */}
+              <div className="flex items-center gap-1">{children}</div>
+            </div>
+
+            {/* Search Bar - Takes remaining space */}
+            <div className="relative flex-1 min-w-0">
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="بحث..."
+                className="w-full px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1C64F2] focus:border-transparent transition-all duration-200 text-sm"
+                dir="rtl"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    executeSearch();
+                  }
+                }}
+              />
+              <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
                 <svg
-                  className="w-4 h-4 ml-2"
+                  className="w-3 h-3 text-slate-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -445,10 +542,105 @@ const DataGrid = ({
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-                تصدير Excel
+              </div>
+            </div>
+
+            {/* Search Navigation - Compact */}
+            {searchResults.total > 0 && (
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <div className="flex border border-slate-300 dark:border-slate-600 rounded overflow-hidden">
+                  <button
+                    onClick={handleSearchPrevious}
+                    disabled={searchResults.total === 0}
+                    className="px-1.5 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:cursor-not-allowed transition-all duration-200 text-slate-700 dark:text-slate-300"
+                    title="السابق"
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 15l7-7 7 7"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={handleSearchNext}
+                    disabled={searchResults.total === 0}
+                    className="px-1.5 py-1 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:bg-slate-100 dark:disabled:bg-slate-800 disabled:cursor-not-allowed transition-all duration-200 text-slate-700 dark:text-slate-300"
+                    title="التالي"
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="px-1.5 py-1 bg-slate-200 dark:bg-slate-600 rounded text-xs font-medium text-slate-700 dark:text-slate-300 min-w-[35px] text-center">
+                  {searchResults.total > 0
+                    ? `${searchResults.current + 1}/${searchResults.total}`
+                    : "0"}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex justify-between items-center px-6 py-4">
+          {/* Left side - Action Buttons */}
+          <div className="flex items-center gap-3">
+            {features.export && (
+              <CustomButton
+                onClick={handleExcelExport}
+                variant="success"
+                size="sm"
+                disabled={isExporting}
+              >
+                {isExporting ? (
+                  <>
+                    <LoadingWave
+                      size="sm"
+                      color="#ffffff"
+                      className="scale-50"
+                    />
+                    جاري التصدير...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-4 h-4 ml-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    تصدير Excel
+                  </>
+                )}
               </CustomButton>
             )}
 
@@ -481,7 +673,7 @@ const DataGrid = ({
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder={labels.searchPlaceholder || "البحث في الجدول..."}
-                className="w-64 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1C64F2] focus:border-transparent transition-all duration-200"
+                className="w-64 lg:w-80 xl:w-96 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1C64F2] focus:border-transparent transition-all duration-200"
                 dir="rtl"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -567,8 +759,22 @@ const DataGrid = ({
       </div>
 
       {/* Grid Section */}
-      <div className="flex-1 w-full">
-        <div className="h-full bg-white dark:bg-slate-900">
+      <div className="flex-1 w-full relative min-h-0 overflow-hidden">
+        {/* Loading Overlay */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-white dark:bg-slate-900 bg-opacity-90 dark:bg-opacity-90 z-10 flex items-center justify-center">
+            <LoadingWave size="md" color="#1C64F2" message="" />
+          </div>
+        )}
+
+        {/* Export Loading Overlay */}
+        {isExporting && !isLoading && (
+          <div className="absolute inset-0 bg-white dark:bg-slate-900 bg-opacity-75 dark:bg-opacity-75 z-10 flex items-center justify-center">
+            <LoadingWave size="md" color="#10B981" message="" />
+          </div>
+        )}
+
+        <div className="h-full w-full bg-white dark:bg-slate-900 overflow-hidden">
           <AgGridReact
             rowData={rowData}
             columnDefs={columnDefs}
@@ -583,8 +789,12 @@ const DataGrid = ({
             enableCellTextSelection={true}
             pagination={true}
             paginationPageSize={500}
-            overlayLoadingTemplate='<span class="ag-overlay-loading-center">جاري التحميل...</span>'
-            overlayNoRowsTemplate='<span class="ag-overlay-no-rows-center">لا توجد بيانات</span>'
+            overlayNoRowsTemplate='<span class="ag-overlay-no-rows-center"> </span>'
+            className="ag-theme-quartz"
+            style={{ height: "100%", width: "100%" }}
+            suppressHorizontalScroll={false}
+            maintainColumnOrder={true}
+            suppressColumnVirtualisation={false}
           />
         </div>
       </div>

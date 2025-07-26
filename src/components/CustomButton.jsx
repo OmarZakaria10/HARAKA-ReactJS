@@ -27,13 +27,13 @@ const CustomButton = ({
   const getSizeStyles = () => {
     switch (size) {
       case "sm":
-        return "px-3 py-1.5 text-xs min-w-[80px]";
+        return "px-2 py-1.5 text-xs sm:px-3 min-w-[60px] sm:min-w-[80px]";
       case "md":
-        return "px-3 py-2 text-sm min-w-[90px]";
+        return "px-3 py-2 text-xs sm:text-sm min-w-[70px] sm:min-w-[90px]";
       case "lg":
-        return "px-4 py-2.5 text-sm min-w-[100px]";
+        return "px-3 py-2.5 text-sm sm:px-4 min-w-[80px] sm:min-w-[100px]";
       default:
-        return "px-3 py-2 text-sm min-w-[90px]";
+        return "px-3 py-2 text-xs sm:text-sm min-w-[70px] sm:min-w-[90px]";
     }
   };
 

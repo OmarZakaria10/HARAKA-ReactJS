@@ -2,6 +2,7 @@ import "./App.css";
 import React, { useState, useEffect } from "react";
 import LoginForm from "./components/LoginForm";
 import Navbar from "./components/Navbar";
+import LoadingWave from "./components/LoadingWave";
 import VehicleGrid from "./components/grids/VehicleGrid";
 import LicenceGrid from "./components/grids/LicenceGrid";
 import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
@@ -105,7 +106,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
-        <div className="text-white text-xl">Loading...</div>
+        <LoadingWave size="lg" color="#60A5FA" message="جاري تحميل النظام..." />
       </div>
     );
   }

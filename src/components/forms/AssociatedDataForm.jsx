@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Label } from "flowbite-react";
 import { endPoints } from "../../services/endPoints";
+import LoadingWave from "../LoadingWave";
 
 export default function AssociatedLicenseForm({ vehicle, license, headers }) {
   const [associatedData, setAssociatedData] = useState(null);
@@ -38,8 +39,8 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
 
   if (loading) {
     return (
-      <div className="text-xl text-center font-medium text-blue-200">
-        جاري التحميل...
+      <div className="flex items-center justify-center p-8">
+        <LoadingWave size="md" color="#60A5FA" message="جاري التحميل..." />
       </div>
     );
   }

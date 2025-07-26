@@ -1,5 +1,5 @@
-import { Button, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
+import LoadingWave from "./LoadingWave";
 
 export default function LoginForm({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
@@ -9,6 +9,7 @@ export default function LoginForm({ onLoginSuccess }) {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -48,86 +49,247 @@ export default function LoginForm({ onLoginSuccess }) {
         }
         onLoginSuccess(data.data.user);
       } else {
-        setError(data.message || "Login failed");
+        setError(data.message || "فشل في تسجيل الدخول");
       }
     } catch (err) {
-      setError("Connection failed. Please try again.");
+      console.error("Login error:", err);
+      setError("حدث خطأ في الاتصال بالخادم");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md sm:max-w-lg space-y-6 sm:space-y-8 bg-gray-800 p-6 sm:p-8 lg:p-10 rounded-xl shadow-2xl border border-gray-700 animate-fade-in">
-        <div className="text-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-white text-shadow">
-            تسجيل الدخول
-          </h2>
-          <p className="mt-2 text-sm sm:text-base text-gray-400">
-            أدخل بياناتك للوصول إلى النظام
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="w-full h-full bg-gradient-to-br from-slate-800/20 to-slate-900/20"></div>
         </div>
 
-        <form
-          className="mt-6 sm:mt-8 space-y-4 sm:space-y-6"
-          onSubmit={handleSubmit}
-        >
-          {error && (
-            <div className="text-red-400 text-center bg-red-900/20 border border-red-400/30 rounded-lg p-3 text-sm sm:text-base animate-slide-in">
-              {error}
-            </div>
-          )}
+        {/* Floating Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-cyan-600/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      </div>
 
-          <div>
-            <div className="mb-2 block">
-              <Label
-                htmlFor="username"
-                value="اسم المستخدم"
-                className="text-white text-sm sm:text-base"
-              />
+      {/* Login Card */}
+      <div className="relative w-full max-w-md z-10">
+        {/* Main Card */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8 relative overflow-hidden">
+          {/* Card Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-blue-500/5 rounded-3xl"></div>
+
+          {/* Content */}
+          <div className="relative z-10">
+            {/* Logo and Header */}
+            <div className="text-center mb-8">
+              <div className="mx-auto w-28 h-28 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/25 transform hover:scale-105 transition-transform duration-300 border border-white/30">
+                <img
+                  src="/futureOfEgypt.jpg"
+                  alt="Future of Egypt Logo"
+                  className="w-20 h-20 object-contain rounded-2xl"
+                />
+              </div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-2">
+                مرحباً بك
+              </h1>
+              <p className="text-slate-400 text-sm">
+                سجل دخولك للوصول إلى نظام الإدارة
+              </p>
             </div>
-            <TextInput
-              id="username"
-              type="text"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              placeholder="ادخل اسم المستخدم"
-              className="input-field"
-              sizing="lg"
-            />
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-xl text-red-200 text-sm text-center backdrop-blur-sm animate-bounce">
+                <div className="flex items-center justify-center gap-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {error}
+                </div>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Username Field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="username"
+                  className="block text-sm font-medium text-slate-200 text-right"
+                >
+                  اسم المستخدم
+                </label>
+                <div className="relative group">
+                  <input
+                    id="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                    dir="rtl"
+                    placeholder="أدخل اسم المستخدم"
+                    className="w-full px-4 py-3.5 pr-12 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 backdrop-blur-sm text-right group-hover:border-white/20"
+                  />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-400 transition-colors">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-slate-200 text-right"
+                >
+                  كلمة المرور
+                </label>
+                <div className="relative group">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    dir="rtl"
+                    placeholder="أدخل كلمة المرور"
+                    className="w-full px-4 py-3.5 pr-12 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 backdrop-blur-sm text-right group-hover:border-white/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors focus:outline-none"
+                  >
+                    {showPassword ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember"
+                    type="checkbox"
+                    checked={formData.remember}
+                    onChange={handleChange}
+                    className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 rounded focus:ring-blue-500 focus:ring-2 backdrop-blur-sm"
+                  />
+                  <label
+                    htmlFor="remember"
+                    className="mr-2 text-sm text-slate-300 select-none cursor-pointer"
+                  >
+                    تذكرني
+                  </label>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-blue-400 disabled:to-indigo-400 text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/25 disabled:scale-100 disabled:hover:shadow-none flex items-center justify-center gap-3 group"
+              >
+                {isLoading ? (
+                  <>
+                    <LoadingWave size="sm" color="#ffffff" message="" />
+                    <span>جاري تسجيل الدخول...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>تسجيل الدخول</span>
+                    <svg
+                      className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Footer */}
+            <div className="mt-8 pt-6 border-t border-white/10 text-center">
+              <p className="text-xs text-slate-500">
+                © 2025 جهاز مستقبل مصر. جميع الحقوق محفوظة.
+              </p>
+              <div className="mt-2 flex justify-center space-x-4 text-slate-500">
+                <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse delay-100"></div>
+                <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse delay-200"></div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <div>
-            <div className="mb-2 block">
-              <Label
-                htmlFor="password"
-                value="كلمة المرور"
-                className="text-white text-sm sm:text-base"
-              />
-            </div>
-            <TextInput
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="ادخل كلمة المرور"
-              className="input-field"
-              sizing="lg"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full btn-primary text-base sm:text-lg py-3 sm:py-4"
-            disabled={isLoading}
-            size="lg"
-          >
-            {isLoading ? "جاري تسجيل الدخول..." : "تسجيل الدخول"}
-          </Button>
-        </form>
+        {/* Decorative Elements */}
+        <div className="absolute -top-4 -left-4 w-8 h-8 bg-blue-500/20 rounded-full blur-xl"></div>
+        <div className="absolute -bottom-4 -right-4 w-12 h-12 bg-purple-500/20 rounded-full blur-xl"></div>
       </div>
     </div>
   );

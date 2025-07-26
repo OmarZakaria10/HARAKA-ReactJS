@@ -6,7 +6,27 @@
   text-align: center;
   background-color: #111827;
   min-height: 100vh;
+  height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0.5rem;
+  }
 }
 
 body {
@@ -14,6 +34,8 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100vh;
 }
 
 .App-logo {
