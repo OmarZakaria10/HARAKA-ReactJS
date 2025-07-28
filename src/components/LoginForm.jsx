@@ -93,7 +93,7 @@ export default function LoginForm({ onLoginSuccess }) {
                 />
               </div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-2">
-                مرحباً بك
+                إدارة الحركة
               </h1>
               <p className="text-slate-400 text-sm">
                 سجل دخولك للوصول إلى نظام الإدارة
@@ -194,7 +194,19 @@ export default function LoginForm({ onLoginSuccess }) {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                          d="M3.98 8.223A10.477 10.477 0 001 12C2.268 16.057 6.065 19 10.5 19a9.735 9.735 0 003.93-.825"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.982 18.725A10.477 10.477 0 0021 12C19.732 7.943 15.935 5 11.5 5a9.735 9.735 0 00-3.93.825M2 2l20 20"
                         />
                       </svg>
                     ) : (

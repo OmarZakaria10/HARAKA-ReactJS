@@ -285,7 +285,7 @@ export default function NavbarComponent({
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                             <p className="text-sm font-medium text-[#1C64F2] bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
                               {user?.role === "admin"
-                                ? "مدير النظام"
+                                ? "Admin"
                                 : user?.role === "licenses"
                                 ? "موظف رخص"
                                 : user?.role === "GPS"
