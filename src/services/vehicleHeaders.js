@@ -16,6 +16,10 @@ const Headers = [
   { field: "administration", headerName: "الإدارة" },
   { field: "insurance_status", headerName: "حالة التأمين" },
   { field: "responsible_person", headerName: "المسئول" },
+  { field: "insurance_policy", headerName: "بوليصة" },
+  { field: "customs_clearance", headerName: "إفراج جمركي" },
+  { field: "insurance_document", headerName: "وثيقة التأمين" },
+  { field: "license_status", headerName: "موقف الترخيص" },
   { field: "supply_source", headerName: "جهة التوريد" },
   { field: "notes", headerName: "الملاحظات" },
 ];
@@ -49,6 +53,7 @@ const GPSRoleHeaders = [
   { field: "administration", headerName: "الإدارة" },
   { field: "responsible_person", headerName: "المسئول" },
   { field: "supply_source", headerName: "جهة التوريد" },
-  { field: "notes", headerName: "الملاحظات" }]
+  { field: "notes", headerName: "الملاحظات" },
+];
 
-export  {Headers,GPSRoleHeaders,LicensesRoleHeaders};
+export { Headers, GPSRoleHeaders, LicensesRoleHeaders };
