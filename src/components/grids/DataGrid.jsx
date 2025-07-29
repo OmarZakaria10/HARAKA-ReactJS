@@ -300,12 +300,14 @@ const DataGrid = ({
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // Ctrl+F or Cmd+F to focus search input
+      // Ctrl+F or Cmd+F to focus search input - prevent default browser search
       if ((event.ctrlKey || event.metaKey) && event.key === "f") {
         event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
         searchInputRef.current?.focus();
         searchInputRef.current?.select(); // Select all text for better UX
+        return false; // Additional prevention
       }
 
       // Enter to execute search when search input is focused
@@ -332,9 +334,16 @@ const DataGrid = ({
       }
     };
 
-    // Add event listener to document to capture global Ctrl+F
-    document.addEventListener("keydown", handleKeyDown, true); // Use capture phase
-    return () => document.removeEventListener("keydown", handleKeyDown, true);
+    // Add event listener to document to capture global Ctrl+F with high priority
+    document.addEventListener("keydown", handleKeyDown, { capture: true, passive: false });
+    
+    // Also add to window for extra coverage
+    window.addEventListener("keydown", handleKeyDown, { capture: true, passive: false });
+    
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, { capture: true, passive: false });
+      window.removeEventListener("keydown", handleKeyDown, { capture: true, passive: false });
+    };
   }, [
     executeSearch,
     handleSearchNext,
