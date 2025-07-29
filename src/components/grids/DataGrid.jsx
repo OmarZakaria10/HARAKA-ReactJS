@@ -335,14 +335,26 @@ const DataGrid = ({
     };
 
     // Add event listener to document to capture global Ctrl+F with high priority
-    document.addEventListener("keydown", handleKeyDown, { capture: true, passive: false });
-    
+    document.addEventListener("keydown", handleKeyDown, {
+      capture: true,
+      passive: false,
+    });
+
     // Also add to window for extra coverage
-    window.addEventListener("keydown", handleKeyDown, { capture: true, passive: false });
-    
+    window.addEventListener("keydown", handleKeyDown, {
+      capture: true,
+      passive: false,
+    });
+
     return () => {
-      document.removeEventListener("keydown", handleKeyDown, { capture: true, passive: false });
-      window.removeEventListener("keydown", handleKeyDown, { capture: true, passive: false });
+      document.removeEventListener("keydown", handleKeyDown, {
+        capture: true,
+        passive: false,
+      });
+      window.removeEventListener("keydown", handleKeyDown, {
+        capture: true,
+        passive: false,
+      });
     };
   }, [
     executeSearch,
