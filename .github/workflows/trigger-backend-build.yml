@@ -3,117 +3,43 @@ name: Trigger Backend Build
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
-    types: [closed]
 
 jobs:
   trigger-backend:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Debug Information
+      - name: Debug Info
         run: |
-          echo "🔍 Workflow Debug Information:"
-          echo "Event: ${{ github.event_name }}"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Ref: ${{ github.ref }}"
-          echo "SHA: ${{ github.sha }}"
+          echo "🔍 Triggering backend build from frontend push"
+          echo "Frontend repo: ${{ github.repository }}"
+          echo "Commit SHA: ${{ github.sha }}"
           echo "Actor: ${{ github.actor }}"
-          echo "Repository: ${{ github.repository }}"
 
       - name: Trigger Backend Build
-        env:
-          GITHUB_TOKEN: ${{ secrets.BACKEND_TRIGGER_TOKEN }}
         run: |
-          echo "🚀 Triggering backend build for frontend changes..."
+          echo "🚀 Sending dispatch to backend repository..."
 
-          # Check if token is available
-          if [ -z "$GITHUB_TOKEN" ]; then
-            echo "❌ BACKEND_TRIGGER_TOKEN secret is not set"
-            echo "Please add the secret in your repository settings"
+          # Check if secret exists
+          if [ -z "${{ secrets.BACKEND_TRIGGER_TOKEN }}" ]; then
+            echo "❌ Error: BACKEND_TRIGGER_TOKEN secret not found"
+            echo "Please add this secret in your repository settings:"
+            echo "https://github.com/OmarZakaria10/HARAKA-ReactJS/settings/secrets/actions"
             exit 1
           fi
 
-          # Prepare the payload
-          payload=$(cat <<EOF
-          {
-            "event_type": "frontend-updated",
-            "client_payload": {
-              "frontend_ref": "${{ github.ref }}",
-              "frontend_sha": "${{ github.sha }}",
-              "frontend_actor": "${{ github.actor }}",
-              "frontend_repo": "${{ github.repository }}",
-              "triggered_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            }
-          }
-          EOF
-          )
-
-          echo "📡 Sending repository dispatch to HARAKA-ExpressJS..."
-
-          # Make the API call
-          response=$(curl -s -w "\n%{http_code}" -X POST \
+          # Send repository dispatch
+          curl -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Authorization: Bearer ${{ secrets.BACKEND_TRIGGER_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/OmarZakaria10/HARAKA-ExpressJS/dispatches" \
-            -d "$payload")
+            https://api.github.com/repos/OmarZakaria10/HARAKA-ExpressJS/dispatches \
+            -d '{
+              "event_type": "frontend-updated",
+              "client_payload": {
+                "frontend_sha": "${{ github.sha }}",
+                "frontend_ref": "${{ github.ref }}",
+                "frontend_actor": "${{ github.actor }}"
+              }
+            }'
 
-          # Extract HTTP status code (last line)
-          http_code=$(echo "$response" | tail -n1)
-          response_body=$(echo "$response" | head -n -1)
-
-          echo "📊 API Response:"
-          echo "HTTP Status: $http_code"
-
-          # Check if the request was successful
-          if [ "$http_code" = "204" ]; then
-            echo "✅ Backend workflow triggered successfully!"
-            echo "The backend repository should start building shortly."
-          else
-            echo "❌ Failed to trigger backend workflow"
-            echo "HTTP Status: $http_code"
-            if [ -n "$response_body" ]; then
-              echo "Response Body: $response_body"
-            fi
-            
-            # Provide helpful error messages
-            case "$http_code" in
-              "401")
-                echo "💡 Authentication failed. Check if BACKEND_TRIGGER_TOKEN is valid and has the required permissions."
-                ;;
-              "403")
-                echo "💡 Forbidden. The token might not have 'repo' scope or access to the target repository."
-                ;;
-              "404")
-                echo "💡 Repository not found. Check if 'OmarZakaria10/HARAKA-ExpressJS' is the correct repository name."
-                ;;
-              "422")
-                echo "💡 Validation failed. Check the payload format or event_type."
-                ;;
-            esac
-            
-            exit 1
-          fi
-
-      - name: Success Notification
-        if: success()
-        run: |
-          echo "🎉 Workflow completed successfully!"
-          echo "Backend build should be starting in the HARAKA-ExpressJS repository."
-
-      - name: Failure Notification
-        if: failure()
-        run: |
-          echo "💥 Workflow failed!"
-          echo "Please check the logs above for details."
-          echo "Common issues:"
-          echo "1. BACKEND_TRIGGER_TOKEN secret not set or invalid"
-          echo "2. Token doesn't have 'repo' scope"
-          echo "3. Repository name is incorrect"
-          echo "4. Backend repository doesn't have repository_dispatch trigger"
+          echo "✅ Repository dispatch sent successfully"
