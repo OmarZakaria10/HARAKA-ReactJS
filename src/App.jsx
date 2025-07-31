@@ -7,6 +7,7 @@ import VehicleGrid from "./components/grids/VehicleGrid";
 import LicenceGrid from "./components/grids/LicenceGrid";
 import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
 import MilitaryLicenseGrid from "./components/grids/MilitaryLicenseGrid";
+import PrivateLicensesGrid from "./components/grids/PrivateLicensesGrid";
 import ReportsGrid from "./components/grids/ReportsGrid";
 
 function App() {
@@ -96,6 +97,8 @@ function App() {
         return <ExpiredLicensesGrid user={user} />;
       case "gesh":
         return <MilitaryLicenseGrid user={user} />;
+      case "privateLicenses":
+        return <PrivateLicensesGrid user={user} />;
       case "reports":
         return <ReportsGrid user={user} />;
       default:
