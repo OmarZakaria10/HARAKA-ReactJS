@@ -68,7 +68,7 @@ function ReportsGrid({ direction = "rtl" }) {
     headers: Headers,
     fetchData,
     labels: {
-      exportFileName: "تقرير المركبات.csv",
+      exportFileName: "تقرير المركبات",
       selectToHideMessage: "الرجاء اختيار المركبات المراد إخفائها",
     },
     features: {

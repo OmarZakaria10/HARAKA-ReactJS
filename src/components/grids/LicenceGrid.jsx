@@ -55,7 +55,7 @@ const LicensesGrid = ({ direction = "rtl" }) => {
     headers: licensesHeaders,
     fetchData,
     labels: {
-      exportFileName: "رخص العربات.csv",
+      exportFileName: "رخص العربات",
       selectToHideMessage: "الرجاء اختيار الرخص المراد إخفائها",
     },
     features: {

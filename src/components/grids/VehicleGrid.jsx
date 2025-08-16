@@ -65,7 +65,7 @@ const VehicleGrid = ({ direction = "rtl", user }) => {
         : Headers,
     fetchData,
     labels: {
-      exportFileName: "الميري الشامل.csv",
+      exportFileName: "الميري الشامل",
       selectToHideMessage: "الرجاء اختيار المركبات المراد إخفائها",
     },
     features: {

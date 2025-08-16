@@ -45,7 +45,7 @@ const ExpiredLicensesGrid = ({ direction = "rtl" }) => {
     headers: licensesHeaders,
     fetchData,
     labels: {
-      exportFileName: "الرخص المنتهية.csv",
+      exportFileName: "الرخص المنتهية",
       selectToHideMessage: "الرجاء اختيار الرخص المراد إخفائها",
     },
     features: {

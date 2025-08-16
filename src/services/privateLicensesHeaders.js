@@ -27,6 +27,10 @@ const privateLicensesHeaders = [
     headerName: "سنة الموديل",
     field: "model_year",
   },
+  {
+    headerName: "حالة الـتأمين",
+    field: "insurance_status",
+  },
 ];
 
 export default privateLicensesHeaders;
