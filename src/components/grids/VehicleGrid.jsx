@@ -2,11 +2,7 @@
 import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
-import {
-  Headers,
-  LicensesRoleHeaders,
-  GPSRoleHeaders,
-} from "../../services/vehicleHeaders";
+import { getHeadersByRole } from "../../services/vehicleHeaders";
 import licensesHeaders from "../../services/licensesHeaders";
 import PopUp from "../PopUp";
 import CustomButton from "../CustomButton";
@@ -20,6 +16,24 @@ const VehicleGrid = ({ direction = "rtl", user }) => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAssociatedModal, setShowAssociatedModal] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(0); // Added updateTrigger
+
+  // Use useMemo to ensure headers update when user role changes
+  const headers = React.useMemo(() => {
+    console.log("VehicleGrid: Computing headers for user role:", user?.role);
+    const roleBasedHeaders = getHeadersByRole(user?.role);
+    console.log(
+      "VehicleGrid: Generated",
+      roleBasedHeaders.length,
+      "headers for role:",
+      user?.role
+    );
+
+    // Additional debugging to show which columns are included
+    const columnNames = roleBasedHeaders.map((h) => h.field);
+    console.log("VehicleGrid: Column fields:", columnNames.join(", "));
+
+    return roleBasedHeaders;
+  }, [user?.role]);
 
   const handleSelectionChange = useCallback(async (selected) => {
     setSelectedItems([...selected]);
@@ -48,7 +62,7 @@ const VehicleGrid = ({ direction = "rtl", user }) => {
   const fetchData = useCallback(async () => {
     try {
       const response = await endPoints.getAllVehicles();
-      console.log(user?.role, "User Role");
+      console.log("VehicleGrid: Fetching data for user role:", user?.role);
       return response;
     } catch (error) {
       console.error("Error fetching vehicles:", error);
@@ -56,27 +70,38 @@ const VehicleGrid = ({ direction = "rtl", user }) => {
     }
   }, [user?.role]);
 
-  const config = {
-    headers:
-      user?.role === "licenses"
-        ? LicensesRoleHeaders
-        : user?.role === "GPS"
-        ? GPSRoleHeaders
-        : Headers,
-    fetchData,
-    labels: {
-      exportFileName: "الميري الشامل",
-      selectToHideMessage: "الرجاء اختيار المركبات المراد إخفائها",
-    },
-    features: {
-      hideButton: true,
-      export: true,
-    },
-    updateTrigger, // Added updateTrigger to config
-  };
+  const config = React.useMemo(() => {
+    console.log("VehicleGrid: Creating config with", headers.length, "headers");
+    return {
+      headers,
+      fetchData,
+      labels: {
+        exportFileName: "الميري الشامل",
+        selectToHideMessage: "الرجاء اختيار المركبات المراد إخفائها",
+      },
+      features: {
+        hideButton: true,
+        export: true,
+      },
+      updateTrigger, // Added updateTrigger to config
+    };
+  }, [headers, fetchData, updateTrigger]);
+
+  // Don't render the grid until we have a user with a role
+  if (!user || !user.role) {
+    return (
+      <div className="h-64 w-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+          <p className="text-slate-400">جاري تحميل البيانات...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <DataGrid
+      key={`vehicle-grid-${user.role}`} // Force re-render when role changes
       direction={direction}
       config={config}
       onSelectionChange={handleSelectionChange}

@@ -22,13 +22,152 @@ export default function NavbarComponent({
     {
       id: "vehicles",
       label: "كشف الميري الشامل",
-      icon: "🚛",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8 16l2.879-2.879a3 3 0 014.242 0L18 16M3 16s0-6 9-6 9 6 9 6"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M16 18a2 2 0 11-4 0 2 2 0 014 0zM8 18a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+          <rect
+            x="1"
+            y="14"
+            width="22"
+            height="4"
+            rx="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
     },
-    { id: "licenses", label: "كشف الرخص", icon: "📄" },
-    { id: "gesh", label: "كشف عربات الجيش", icon: "🚗" },
-    { id: "expired", label: "الرخص المنتهية", icon: "⚠️" },
-    { id: "privateLicenses", label: "ترخيص ملاكي", icon: "🚙" },
-    { id: "reports", label: "التقارير", icon: "📊" },
+    {
+      id: "licenses",
+      label: "كشف الرخص",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+        >
+          <rect
+            x="3"
+            y="4"
+            width="18"
+            height="16"
+            rx="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M7 8h6m-6 4h8m-8 4h4"
+          />
+          <circle
+            cx="17"
+            cy="10"
+            r="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: "gesh",
+      label: "كشف عربات الجيش",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 14l-2-8H7l-2 8"
+          />
+          <circle cx="9" cy="19" r="2" />
+          <circle cx="15" cy="19" r="2" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 14h14" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 6V3h6v3" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3V1" />
+        </svg>
+      ),
+    },
+    {
+      id: "expired",
+      label: "الرخص المنتهية",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: "privateLicenses",
+      label: "مصر للتأمين",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: "reports",
+      label: "التقارير",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+          />
+        </svg>
+      ),
+    },
   ];
 
   // Navigation function
@@ -67,14 +206,8 @@ export default function NavbarComponent({
     };
 
     const handleGlobalKeyDown = (event) => {
-      // Prevent default Ctrl+F to let custom search components handle it
-      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
-        // Only prevent if we're not in an input field already
-        if (!["INPUT", "TEXTAREA"].includes(event.target.tagName)) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      }
+      // Removed Ctrl+F prevention to allow browser's default find functionality
+      // Previous code was preventing default browser search behavior
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -223,19 +356,19 @@ export default function NavbarComponent({
                     <div className="absolute right-0 top-full mt-2 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-600 z-[9999] animate-in slide-in-from-top-2 duration-200">
                       {/* User Info Header */}
                       <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-600">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1C64F2] to-blue-600 flex items-center justify-center text-white font-bold shadow-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1C64F2] to-blue-600 flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0">
                             {user?.username?.[0]?.toUpperCase() || "U"}
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <p className="text-base font-semibold text-slate-900 dark:text-white truncate">
                               {user?.name || user?.username || "مستخدم"}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                              <p className="text-sm font-medium text-[#1C64F2] bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
+                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
+                              <p className="text-xs font-medium text-[#1C64F2] bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full truncate flex-1">
                                 {user?.role === "admin"
-                                  ? "Admin"
+                                  ? "مدير النظام"
                                   : user?.role === "licenses"
                                   ? "موظف رخص"
                                   : user?.role === "GPS"
@@ -338,17 +471,17 @@ export default function NavbarComponent({
                     <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-600 z-[9999] animate-in slide-in-from-top-2 duration-200">
                       {/* User Info in Menu */}
                       <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-600">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1C64F2] to-blue-600 flex items-center justify-center text-white font-bold shadow-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1C64F2] to-blue-600 flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0">
                             {user?.username?.[0]?.toUpperCase() || "U"}
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <p className="text-base font-semibold text-slate-900 dark:text-white truncate">
                               {user?.name || user?.username || "مستخدم"}
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                              <p className="text-sm font-medium text-[#1C64F2] bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
+                              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
+                              <p className="text-xs font-medium text-[#1C64F2] bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full truncate flex-1">
                                 {user?.role === "admin"
                                   ? "مدير النظام"
                                   : user?.role === "licenses"
@@ -384,7 +517,7 @@ export default function NavbarComponent({
                         `}
                           >
                             <div
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center text-lg transition-all duration-200 ${
+                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
                                 currentWindow === item.id
                                   ? "bg-[#1C64F2] text-white shadow-lg shadow-[#1C64F2]/25"
                                   : "bg-slate-100 dark:bg-slate-700 group-hover:bg-[#1C64F2]/10 group-hover:text-[#1C64F2]"

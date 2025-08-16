@@ -3,43 +3,65 @@ import React, { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
 import privateLicensesHeaders from "../../services/privateLicensesHeaders";
-// import { Headers } from "../../services/vehicleHeaders";
-// import CustomButton from "../CustomButton";
-// import PopUp from "../PopUp";
-// import AddLicenseForm from "../forms/AddLicenseForm";
-// import UpdateLicenseForm from "../forms/UpdateLicenseForm";
-// import AssociatedDataForm from "../forms/AssociatedDataForm";
+import CustomButton from "../CustomButton";
+
+const ValidInsuranceStatus = [
+  "تم التأمين عليها",
+  "لن يتم التأمين عليها",
+  "سيتم التأمين عليها",
+  "تمت معاينتها",
+  "تم الإستبعاد من التأمين",
+];
 
 const PrivateLicensesGrid = ({ direction = "rtl" }) => {
   const [selectedItems, setSelectedItems] = useState([]);
-  // const [showAddModal, setShowAddModal] = useState(false);
-  // const [showUpdateModal, setShowUpdateModal] = useState(false);
-  // const [showAssociatedModal, setShowAssociatedModal] = useState(false);
+  const [insuranceStatus, setInsuranceStatus] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(0);
 
   const handleSelectionChange = useCallback((selected) => {
     setSelectedItems([...selected]);
   }, []);
 
-  const handleDelete = useCallback(async () => {
-    if (selectedItems.length === 0) {
-      alert("الرجاء اختيار التراخيص المراد حذفها");
+  const handleUpdateInsuranceStatus = useCallback(async () => {
+    if (!insuranceStatus) {
+      alert("الرجاء اختيار حالة التأمين");
       return;
     }
 
-    const isConfirmed = window.confirm("هل أنت متأكد من حذف التراخيص المحددة؟");
-    if (!isConfirmed) return;
+    if (selectedItems.length === 0) {
+      alert("الرجاء اختيار المركبات المراد تحديث حالة التأمين لها");
+      return;
+    }
 
+    setIsUpdating(true);
     try {
-      await Promise.all(
-        selectedItems.map((item) => endPoints.deleteLicense(item.code))
+      // Extract vehicle IDs from selected vehicles
+      const vehicleIds = selectedItems.map(
+        (vehicle) => vehicle.vehicle_id || vehicle.id
+      );
+
+      const response = await endPoints.updateInsuranceStatus(
+        vehicleIds,
+        insuranceStatus
+      );
+
+      alert(
+        `تم تحديث حالة التأمين بنجاح لـ ${response.data.updatedVehicles} مركبة`
       );
       setSelectedItems([]);
+      setInsuranceStatus("");
       setUpdateTrigger((prev) => prev + 1);
-    } catch (err) {
-      console.error("Failed to delete private licenses:", err);
+    } catch (error) {
+      console.error("Error updating insurance status:", error);
+      alert(
+        error.response?.data?.message ||
+          "حدث خطأ أثناء تحديث حالة التأمين. الرجاء المحاولة مرة أخرى."
+      );
+    } finally {
+      setIsUpdating(false);
     }
-  }, [selectedItems]);
+  }, [selectedItems, insuranceStatus]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -70,7 +92,46 @@ const PrivateLicensesGrid = ({ direction = "rtl" }) => {
       direction={direction}
       config={config}
       onSelectionChange={handleSelectionChange}
-    ></DataGrid>
+    >
+      {/* Insurance Status Update Controls */}
+      <div className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg border border-gray-700">
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+            حالة التأمين:
+          </label>
+          <select
+            value={insuranceStatus}
+            onChange={(e) => setInsuranceStatus(e.target.value)}
+            className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[200px]"
+            disabled={isUpdating}
+          >
+            <option value="">اختر حالة التأمين</option>
+            {ValidInsuranceStatus.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <CustomButton
+          onClick={handleUpdateInsuranceStatus}
+          disabled={
+            selectedItems.length === 0 || !insuranceStatus || isUpdating
+          }
+          variant="primary"
+          size="sm"
+        >
+          {isUpdating ? "جاري التعديل..." : "تعديل"}
+        </CustomButton>
+
+        {selectedItems.length > 0 && (
+          <span className="text-xs text-gray-400">
+            ({selectedItems.length} مركبة محددة)
+          </span>
+        )}
+      </div>
+    </DataGrid>
   );
 };
 

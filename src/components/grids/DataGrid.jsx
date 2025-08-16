@@ -300,30 +300,32 @@ const DataGrid = ({
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // Ctrl+F or Cmd+F to focus search input - prevent default browser search
+      // Handle Ctrl+F to focus search input and prevent default browser search
       if ((event.ctrlKey || event.metaKey) && event.key === "f") {
         event.preventDefault();
         event.stopPropagation();
-        event.stopImmediatePropagation();
-        searchInputRef.current?.focus();
-        searchInputRef.current?.select(); // Select all text for better UX
-        return false; // Additional prevention
+        // Focus the search input
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+          searchInputRef.current.select(); // Select all text for easy replacement
+        }
+        return;
+      }
+
+      // Only handle these events when search input is focused
+      if (document.activeElement !== searchInputRef.current) {
+        return;
       }
 
       // Enter to execute search when search input is focused
-      if (
-        event.key === "Enter" &&
-        document.activeElement === searchInputRef.current
-      ) {
+      if (event.key === "Enter") {
         event.preventDefault();
         executeSearch();
+        return;
       }
 
       // Arrow keys to navigate search results when search input is focused
-      if (
-        searchResults.total > 0 &&
-        document.activeElement === searchInputRef.current
-      ) {
+      if (searchResults.total > 0) {
         if (event.key === "ArrowDown") {
           event.preventDefault();
           handleSearchNext();
@@ -332,29 +334,20 @@ const DataGrid = ({
           handleSearchPrevious();
         }
       }
+
+      // Escape to clear search
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setSearchTerm("");
+        searchInputRef.current.blur();
+      }
     };
 
-    // Add event listener to document to capture global Ctrl+F with high priority
-    document.addEventListener("keydown", handleKeyDown, {
-      capture: true,
-      passive: false,
-    });
-
-    // Also add to window for extra coverage
-    window.addEventListener("keydown", handleKeyDown, {
-      capture: true,
-      passive: false,
-    });
+    // Add event listener for all keyboard interactions
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown, {
-        capture: true,
-        passive: false,
-      });
-      window.removeEventListener("keydown", handleKeyDown, {
-        capture: true,
-        passive: false,
-      });
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [
     executeSearch,
@@ -448,7 +441,6 @@ const DataGrid = ({
     <div
       className="flex flex-col h-[calc(100vh-120px)] bg-slate-50 dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700"
       ref={containerRef}
-      tabIndex={0}
     >
       {/* Enhanced Modern Toolbar */}
       <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 rounded-t-xl">
@@ -509,11 +501,6 @@ const DataGrid = ({
                 placeholder={labels.searchPlaceholder || "البحث في الجدول..."}
                 className="w-64 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1C64F2] focus:border-transparent transition-all duration-200"
                 dir="rtl"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    executeSearch();
-                  }
-                }}
               />
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                 <svg
