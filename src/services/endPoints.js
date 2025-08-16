@@ -93,6 +93,18 @@ class Axios {
       throw error;
     }
   }
+
+  async updateInsuranceStatus(vehicles, insurance_status) {
+    try {
+      const response = await this.api.put("/vehicles/updateInsuranceStatus", {
+        vehicles,
+        insurance_status,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
   async createLicense(licenseData) {
     try {
       const response = await this.api.post(
@@ -198,7 +210,9 @@ class Axios {
 
   async getAllMilitaryLicenses() {
     try {
-      const response = await this.api.get("/military-licenses/getAllMilitaryLicenses");
+      const response = await this.api.get(
+        "/military-licenses/getAllMilitaryLicenses"
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -249,7 +263,9 @@ class Axios {
 
   async getUniqueMilitaryFieldValues() {
     try {
-      const response = await this.api.get("/military-licenses/getUniqueFieldValues?fields=vehicle_type,vehicle_equipment,allocation,load_capacity,management_method");
+      const response = await this.api.get(
+        "/military-licenses/getUniqueFieldValues?fields=vehicle_type,vehicle_equipment,allocation,load_capacity,management_method"
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -258,7 +274,9 @@ class Axios {
 
   async getMilitaryLicenseByChassisNumber(chassisNumber) {
     try {
-      const response = await this.api.get(`/military-licenses/byChassisNumber/${chassisNumber}`);
+      const response = await this.api.get(
+        `/military-licenses/byChassisNumber/${chassisNumber}`
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -267,7 +285,9 @@ class Axios {
 
   async getMilitaryLicenseByVehicleId(vehicleId) {
     try {
-      const response = await this.api.get(`/military-licenses/byVehicleId/${vehicleId}`);
+      const response = await this.api.get(
+        `/military-licenses/byVehicleId/${vehicleId}`
+      );
       return response.data;
     } catch (error) {
       throw error;
