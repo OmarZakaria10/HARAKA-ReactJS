@@ -237,7 +237,13 @@ const DataGrid = ({
 
       const targetCell = matchingCells[currentIndex];
       if (targetCell) {
-        gridApi.ensureIndexVisible(targetCell.rowIndex);
+        // Center the row vertically in the viewport
+        gridApi.ensureIndexVisible(targetCell.rowIndex, "middle");
+
+        // Center the column horizontally in the viewport
+        gridApi.ensureColumnVisible(targetCell.colId);
+
+        // Set focus to the cell
         gridApi.setFocusedCell(targetCell.rowIndex, targetCell.colId);
 
         // Refresh cells to update highlighting
@@ -300,16 +306,21 @@ const DataGrid = ({
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // Handle Ctrl+F to focus search input and prevent default browser search
-      if ((event.ctrlKey || event.metaKey) && event.key === "f") {
+      // Handle Ctrl+F (Windows/Linux) or Cmd+F (Mac) to focus search input and prevent default browser search
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        (event.key === "f" || event.key === "F")
+      ) {
         event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
+
         // Focus the search input
         if (searchInputRef.current) {
           searchInputRef.current.focus();
           searchInputRef.current.select(); // Select all text for easy replacement
         }
-        return;
+        return false; // Additional prevention for older browsers
       }
 
       // Only handle these events when search input is focused
@@ -339,15 +350,31 @@ const DataGrid = ({
       if (event.key === "Escape") {
         event.preventDefault();
         setSearchTerm("");
-        searchInputRef.current.blur();
+        if (searchInputRef.current) {
+          searchInputRef.current.blur();
+        }
       }
     };
 
-    // Add event listener for all keyboard interactions
-    document.addEventListener("keydown", handleKeyDown);
+    const handleKeyUp = (event) => {
+      // Additional prevention on keyup for Ctrl+F
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        (event.key === "f" || event.key === "F")
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
+    };
+
+    // Add event listeners with capture phase to intercept earlier
+    document.addEventListener("keydown", handleKeyDown, true);
+    document.addEventListener("keyup", handleKeyUp, true);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
+      document.removeEventListener("keyup", handleKeyUp, true);
     };
   }, [
     executeSearch,
