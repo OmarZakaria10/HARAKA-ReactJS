@@ -33,6 +33,28 @@ Built with React 19, ag-Grid, Flowbite React, and Tailwind CSS for a responsive 
 
 ---
 
+## 📊 Architecture Overview
+
+### Frontend Architecture
+- **Component-based structure** using functional components with hooks
+- **Context API** for global state management
+- **Custom hooks** for shared logic and data fetching
+- **Error boundaries** for graceful error handling
+- **Lazy loading** of components for improved performance
+
+### API Integration
+- RESTful API integration using Axios with request/response interceptors
+- Centralized API service with endpoint management
+- Token-based authentication with automatic refresh
+- Request caching and debouncing for performance optimization
+
+### State Management
+- React Context API for global state
+- Custom hooks for component-specific state
+- Local storage integration for persistent user preferences
+
+---
+
 ## 🏁 Getting Started
 
 ### Prerequisites
@@ -74,14 +96,39 @@ npm run eject      # Eject from Create React App (irreversible)
 
 ```
 haraka-front/
-├── public/              # Static files
+├── public/                # Static files
 ├── src/
-│   ├── components/      # Reusable UI components
-│   ├── pages/          # Page components
-│   ├── services/       # API services
-│   ├── utils/          # Utility functions
-│   ├── hooks/          # Custom React hooks
-│   └── assets/         # Images, icons, etc.
+│   ├── components/        # Reusable UI components
+│   │   ├── common/        # Shared components (buttons, inputs, etc.)
+│   │   ├── layout/        # Layout components (header, sidebar, etc.)
+│   │   ├── vehicles/      # Vehicle-specific components
+│   │   ├── licenses/      # License-specific components
+│   │   └── reports/       # Report-specific components
+│   ├── pages/             # Page components
+│   │   ├── auth/          # Authentication pages
+│   │   ├── dashboard/     # Dashboard pages
+│   │   ├── vehicles/      # Vehicle management pages
+│   │   ├── licenses/      # License management pages
+│   │   └── reports/       # Reporting pages
+│   ├── services/          # API services
+│   │   ├── api.js         # API client configuration
+│   │   ├── authService.js # Authentication services
+│   │   ├── vehicleService.js # Vehicle API services
+│   │   └── licenseService.js # License API services
+│   ├── utils/             # Utility functions
+│   │   ├── formatters.js  # Data formatting utilities
+│   │   ├── validators.js  # Form validation utilities
+│   │   └── exporters.js   # Export utilities (PDF, Excel)
+│   ├── hooks/             # Custom React hooks
+│   │   ├── useAuth.js     # Authentication hook
+│   │   ├── useApi.js      # API hook with error handling
+│   │   └── useExport.js   # Export functionality hook
+│   ├── context/           # React context providers
+│   │   ├── AuthContext.js # Authentication context
+│   │   └── ThemeContext.js # Theme/appearance context
+│   ├── assets/            # Images, icons, etc.
+│   ├── styles/            # Global styles and Tailwind utilities
+│   └── App.js             # Main application component
 ├── package.json
 └── README.md
 ```
@@ -126,6 +173,48 @@ The project uses Tailwind CSS for styling. Configuration can be found in `tailwi
 - Excel export using ExcelJS
 - PDF generation with React-PDF and PDFMake
 - Custom formatting options
+
+### User Authentication & Authorization
+- JWT-based authentication with refresh token mechanism
+- Role-based access control (Admin, Manager, Viewer)
+- Permission-based component rendering
+- Secure session management with HTTP-only cookies
+- Password policies and account lockout mechanisms
+
+### Dashboard Analytics
+- Real-time vehicle status monitoring
+- License expiration tracking and notifications
+- Interactive charts and statistics
+- Customizable dashboard widgets
+- Export dashboard data to multiple formats
+
+## 📊 API Documentation
+
+The application connects to a RESTful API with the following endpoints:
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+- `POST /api/auth/refresh-token` - Refresh authentication token
+
+### Vehicles
+- `GET /api/vehicles` - List all vehicles
+- `GET /api/vehicles/:id` - Get vehicle details
+- `POST /api/vehicles` - Create new vehicle
+- `PUT /api/vehicles/:id` - Update vehicle
+- `DELETE /api/vehicles/:id` - Delete vehicle
+
+### Licenses
+- `GET /api/licenses` - List all licenses
+- `GET /api/licenses/:id` - Get license details
+- `POST /api/licenses` - Create new license
+- `PUT /api/licenses/:id` - Update license
+- `DELETE /api/licenses/:id` - Delete license
+
+### Reports
+- `GET /api/reports/vehicles` - Vehicle reports
+- `GET /api/reports/licenses` - License reports
+- `GET /api/reports/custom` - Custom report generation
 
 ---
 
@@ -206,3 +295,14 @@ npm run postinstall
 ```
 
 ---
+## 👏 Acknowledgments
+
+- Flowbite React team for the comprehensive UI component library
+- ag-Grid team for the powerful data grid capabilities
+- Tailwind CSS community for the flexible styling system
+- React team for the amazing frontend framework
+- All contributors to the HARAKA project
+
+---
+
+**HARAKA ReactJS** - Developed with ❤️ for جهاز مستقبل مصر للتنمية المستدامة
