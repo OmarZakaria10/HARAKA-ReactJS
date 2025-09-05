@@ -28,6 +28,14 @@ const privateLicensesHeaders = [
     field: "model_year",
   },
   {
+    headerName: "القطاع",
+    field: "sector",
+  },
+  {
+    headerName: "الإدارة",
+    field: "administration",
+  },
+  {
     headerName: "حالة الـتأمين",
     field: "insurance_status",
   },

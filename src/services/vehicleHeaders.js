@@ -151,7 +151,6 @@ const fieldHeaderMappings = {
 
 // Function to generate headers based on user role
 const getHeadersByRole = (userRole) => {
-
   // Default to 'user' role if role is not found or is null/undefined
   const effectiveRole = userRole || "user";
   const columns =

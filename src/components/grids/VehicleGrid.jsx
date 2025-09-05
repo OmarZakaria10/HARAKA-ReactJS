@@ -19,14 +19,14 @@ const VehicleGrid = ({ direction = "rtl", user }) => {
 
   // Use useMemo to ensure headers update when user role changes
   const headers = React.useMemo(() => {
-    console.log("VehicleGrid: Computing headers for user role:", user?.role);
+    // console.log("VehicleGrid: Computing headers for user role:", user?.role);
     const roleBasedHeaders = getHeadersByRole(user?.role);
-    console.log(
-      "VehicleGrid: Generated",
-      roleBasedHeaders.length,
-      "headers for role:",
-      user?.role
-    );
+    // console.log(
+    //   "VehicleGrid: Generated",
+    //   roleBasedHeaders.length,
+    //   "headers for role:",
+    //   user?.role
+    // );
 
     // Additional debugging to show which columns are included
     const columnNames = roleBasedHeaders.map((h) => h.field);
