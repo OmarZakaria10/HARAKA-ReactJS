@@ -60,12 +60,12 @@ export default function LoginForm({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         {/* Grid Pattern */}
         <div className="absolute inset-0 opacity-40">
-          <div className="w-full h-full bg-gradient-to-br from-slate-800/20 to-slate-900/20"></div>
+          <div className="w-full h-full bg-gradient-to-br from-slate-200/20 to-slate-300/20 dark:from-slate-800/20 dark:to-slate-900/20"></div>
         </div>
 
         {/* Floating Orbs */}
@@ -77,32 +77,32 @@ export default function LoginForm({ onLoginSuccess }) {
       {/* Login Card */}
       <div className="relative w-full max-w-md z-10">
         {/* Main Card */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8 relative overflow-hidden">
+        <div className="bg-white/90 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl p-8 relative overflow-hidden">
           {/* Card Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-blue-500/5 rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-100/50 via-transparent to-blue-500/10 dark:from-white/10 dark:via-transparent dark:to-blue-500/5 rounded-3xl"></div>
 
           {/* Content */}
           <div className="relative z-10">
             {/* Logo and Header */}
             <div className="text-center mb-8">
-              <div className="mx-auto w-28 h-28 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/25 transform hover:scale-105 transition-transform duration-300 border border-white/30">
+              <div className="mx-auto w-28 h-28 bg-white/80 dark:bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/25 transform hover:scale-105 transition-transform duration-300 border border-slate-200 dark:border-white/30">
                 <img
                   src="/futureOfEgypt.jpg"
                   alt="Future of Egypt Logo"
                   className="w-20 h-20 object-contain rounded-2xl"
                 />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-blue-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent mb-2">
                 إدارة الحركة
               </h1>
-              <p className="text-slate-400 text-sm">
+              <p className="text-slate-600 dark:text-slate-400 text-sm">
                 سجل دخولك للوصول إلى نظام الإدارة
               </p>
             </div>
 
             {/* Error Message */}
             {error && (
-              <div className="mb-6 p-4 bg-red-500/20 border border-red-400/30 rounded-xl text-red-200 text-sm text-center backdrop-blur-sm animate-bounce">
+              <div className="mb-6 p-4 bg-red-100 dark:bg-red-500/20 border border-red-300 dark:border-red-400/30 rounded-xl text-red-700 dark:text-red-200 text-sm text-center backdrop-blur-sm animate-bounce">
                 <div className="flex items-center justify-center gap-2">
                   <svg
                     className="w-5 h-5"
@@ -126,7 +126,7 @@ export default function LoginForm({ onLoginSuccess }) {
               <div className="space-y-2">
                 <label
                   htmlFor="username"
-                  className="block text-sm font-medium text-slate-200 text-right"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-200 text-right"
                 >
                   اسم المستخدم
                 </label>
@@ -139,9 +139,9 @@ export default function LoginForm({ onLoginSuccess }) {
                     required
                     dir="rtl"
                     placeholder="أدخل اسم المستخدم"
-                    className="w-full px-4 py-3.5 pr-12 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 backdrop-blur-sm text-right group-hover:border-white/20"
+                    className="w-full px-4 py-3.5 pr-12 bg-white/80 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 backdrop-blur-sm text-right group-hover:border-slate-400 dark:group-hover:border-white/20"
                   />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-400 transition-colors">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-400 transition-colors">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -163,7 +163,7 @@ export default function LoginForm({ onLoginSuccess }) {
               <div className="space-y-2">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-slate-200 text-right"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-200 text-right"
                 >
                   كلمة المرور
                 </label>
@@ -176,12 +176,12 @@ export default function LoginForm({ onLoginSuccess }) {
                     required
                     dir="rtl"
                     placeholder="أدخل كلمة المرور"
-                    className="w-full px-4 py-3.5 pr-12 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 backdrop-blur-sm text-right group-hover:border-white/20"
+                    className="w-full px-4 py-3.5 pr-12 bg-white/80 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 backdrop-blur-sm text-right group-hover:border-slate-400 dark:group-hover:border-white/20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors focus:outline-none"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors focus:outline-none"
                   >
                     {showPassword ? (
                       <svg
@@ -242,11 +242,11 @@ export default function LoginForm({ onLoginSuccess }) {
                     type="checkbox"
                     checked={formData.remember}
                     onChange={handleChange}
-                    className="w-4 h-4 text-blue-600 bg-white/10 border-white/20 rounded focus:ring-blue-500 focus:ring-2 backdrop-blur-sm"
+                    className="w-4 h-4 text-blue-600 bg-white/80 dark:bg-white/10 border-slate-300 dark:border-white/20 rounded focus:ring-blue-500 focus:ring-2 backdrop-blur-sm"
                   />
                   <label
                     htmlFor="remember"
-                    className="mr-2 text-sm text-slate-300 select-none cursor-pointer"
+                    className="mr-2 text-sm text-slate-600 dark:text-slate-300 select-none cursor-pointer"
                   >
                     تذكرني
                   </label>
@@ -286,14 +286,14 @@ export default function LoginForm({ onLoginSuccess }) {
             </form>
 
             {/* Footer */}
-            <div className="mt-8 pt-6 border-t border-white/10 text-center">
-              <p className="text-xs text-slate-500">
+            <div className="mt-8 pt-6 border-t border-slate-300/50 dark:border-white/10 text-center">
+              <p className="text-xs text-slate-600 dark:text-slate-500">
                 © 2025 جهاز مستقبل مصر. جميع الحقوق محفوظة.
               </p>
-              <div className="mt-2 flex justify-center space-x-4 text-slate-500">
-                <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse delay-100"></div>
-                <div className="w-2 h-2 bg-slate-500 rounded-full animate-pulse delay-200"></div>
+              <div className="mt-2 flex justify-center space-x-4 text-slate-500 dark:text-slate-500">
+                <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-pulse delay-100"></div>
+                <div className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-pulse delay-200"></div>
               </div>
             </div>
           </div>

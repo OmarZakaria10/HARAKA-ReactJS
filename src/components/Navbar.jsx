@@ -15,8 +15,23 @@ export default function NavbarComponent({
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingRoute, setLoadingRoute] = useState(null);
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light";
+    }
+    return "dark";
+  });
   const userDropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
+
+  const toggleTheme = () => {
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem("haraka-theme", newTheme);
+    setCurrentTheme(newTheme);
+  };
 
   const menuItems = [
     {
@@ -284,7 +299,7 @@ export default function NavbarComponent({
       )}
 
       <div className="w-full px-4 pt-4 pb-2">
-        <nav className="bg-gradient-to-r from-[#1f2836] via-[#2a3441] to-[#1f2836] w-full shadow-lg border border-slate-600/50 backdrop-blur-md relative z-[9999] rounded-lg">
+        <nav className="bg-gradient-to-r from-white via-gray-50 to-white dark:from-[#1f2836] dark:via-[#2a3441] dark:to-[#1f2836] w-full shadow-lg border border-slate-200 dark:border-slate-600/50 backdrop-blur-md relative z-[9999] rounded-lg">
           <div className="max-w-full mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between h-12 sm:h-14 w-full">
               {/* Logo Section - Hard Left */}
@@ -298,7 +313,7 @@ export default function NavbarComponent({
                     />
                     <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
-                  <span className="text-base sm:text-lg lg:text-xl font-bold text-white truncate max-w-32 sm:max-w-none bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                  <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white truncate max-w-32 sm:max-w-none bg-gradient-to-r from-slate-900 to-blue-800 dark:from-white dark:to-blue-200 bg-clip-text text-transparent">
                     {name || "جهاز مستقبل مصر"}
                   </span>
                 </a>
@@ -308,10 +323,10 @@ export default function NavbarComponent({
               <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 pr-0">
                 {/* User Info */}
                 <div className="hidden sm:flex flex-col items-end">
-                  <span className="text-white text-sm font-medium truncate max-w-32 lg:max-w-none">
+                  <span className="text-slate-900 dark:text-white text-sm font-medium truncate max-w-32 lg:max-w-none">
                     {user?.name || user?.username || "المستخدم"}
                   </span>
-                  <span className="text-slate-400 text-xs">
+                  <span className="text-slate-600 dark:text-slate-400 text-xs">
                     {user?.role || "مستخدم"}
                   </span>
                 </div>
@@ -435,6 +450,48 @@ export default function NavbarComponent({
                   )}
                 </div>
 
+                {/* Theme Toggle Button */}
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all duration-200"
+                  title={
+                    currentTheme === "dark"
+                      ? "Switch to light mode"
+                      : "Switch to dark mode"
+                  }
+                >
+                  {currentTheme === "dark" ? (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                      />
+                    </svg>
+                  )}
+                </button>
+
                 {/* Navigation Menu Toggle - Now shown on all screen sizes */}
                 <div className="relative" ref={mobileMenuRef}>
                   <button
@@ -444,8 +501,8 @@ export default function NavbarComponent({
                     }
                     disabled={isLoggingOut}
                     className={`
-                  flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 text-slate-400 hover:text-white 
-                  hover:bg-slate-700/50 rounded-lg transition-all duration-200
+                  flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white 
+                  hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all duration-200
                   ${isLoggingOut ? "opacity-50 cursor-not-allowed" : ""}
                 `}
                   >

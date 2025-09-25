@@ -18,17 +18,51 @@ import { generateExcel } from "../../services/excelGenerator";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-const myTheme = themeQuartz.withParams({
-  backgroundColor: "#1f2836",
-  browserColorScheme: "dark",
-  chromeBackgroundColor: {
-    ref: "foregroundColor",
-    mix: 0.07,
-    onto: "backgroundColor",
-  },
-  foregroundColor: "#FFF",
-  headerFontSize: 14,
-});
+// Dynamic theme creation based on current theme
+const createTheme = (isDark = true) => {
+  if (isDark) {
+    return themeQuartz.withParams({
+      backgroundColor: "#1f2937",
+      browserColorScheme: "dark",
+      chromeBackgroundColor: {
+        ref: "foregroundColor",
+        mix: 0.07,
+        onto: "backgroundColor",
+      },
+      foregroundColor: "#f3f4f6",
+      headerFontSize: 14,
+      headerBackgroundColor: "#374151",
+      headerForegroundColor: "#f3f4f6",
+      // oddRowBackgroundColor: "#2d3748",
+      rowHoverColor: "#374151",
+      rowBorder: true,
+      wrapperBorder: true,
+      selectedRowBackgroundColor: "#1e40af",
+      borderColor: "#4b5563",
+    });
+  } else {
+    return themeQuartz.withParams({
+      backgroundColor: "#ffffff",
+      browserColorScheme: "light",
+      chromeBackgroundColor: {
+        ref: "foregroundColor",
+        mix: 0.07,
+        onto: "backgroundColor",
+      },
+      foregroundColor: "#000000",
+      headerFontSize: 14,
+      columnBorder: true,
+      headerBackgroundColor: "#DFEAFF",
+      // headerForegroundColor: "#374151",
+      // oddRowBackgroundColor: "#fafafa",
+      // rowHoverColor: "#f8fafc",
+      selectedRowBackgroundColor: "#eff6ff",
+      borderColor: "#00000026",
+      rowBorder: true,
+      wrapperBorder: true,
+    });
+  }
+};
 
 const DataGrid = ({
   direction = "rtl",
@@ -55,6 +89,51 @@ const DataGrid = ({
   const searchInputRef = useRef(null);
   const containerRef = useRef(null);
 
+  // Detect current theme from document or localStorage
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("haraka-theme");
+      if (savedTheme) return savedTheme;
+
+      const hasDocumentDarkClass =
+        document.documentElement.classList.contains("dark");
+      const hasDataThemeDark =
+        document.documentElement.getAttribute("data-theme") === "dark";
+
+      return hasDocumentDarkClass || hasDataThemeDark ? "dark" : "light";
+    }
+    return "dark";
+  });
+
+  // Create theme based on current theme
+  const myTheme = useMemo(() => {
+    return createTheme(currentTheme === "dark");
+  }, [currentTheme]);
+
+  // Watch for theme changes
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "attributes") {
+          const isDark =
+            document.documentElement.classList.contains("dark") ||
+            document.documentElement.getAttribute("data-theme") === "dark";
+          const newTheme = isDark ? "dark" : "light";
+          if (newTheme !== currentTheme) {
+            setCurrentTheme(newTheme);
+          }
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme"],
+    });
+
+    return () => observer.disconnect();
+  }, [currentTheme]);
+
   // Create column definitions with index column
   const columnDefs = useMemo(() => {
     const indexColumn = {
@@ -68,7 +147,7 @@ const DataGrid = ({
       cellStyle: {
         textAlign: "center",
         fontWeight: "bold",
-        backgroundColor: "#2a3441",
+        backgroundColor: currentTheme === "dark" ? "#374151" : "#DFEAFF",
       },
       valueGetter: (params) => {
         return params.node.rowIndex + 1;
@@ -76,7 +155,7 @@ const DataGrid = ({
     };
 
     return [indexColumn, ...headers];
-  }, [headers]);
+  }, [headers, currentTheme]);
 
   const onGridReady = useCallback((params) => {
     setGridApi(params.api);
@@ -466,7 +545,7 @@ const DataGrid = ({
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-120px)] bg-slate-50 dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700"
+      className="flex flex-col h-[calc(100vh-120px)] bg-slate-50 white:bg-slate-50 dark:bg-slate-900 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700"
       ref={containerRef}
     >
       {/* Enhanced Modern Toolbar */}

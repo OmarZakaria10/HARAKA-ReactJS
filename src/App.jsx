@@ -15,6 +15,20 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentWindow, setCurrentWindow] = useState("vehicles"); // State for current view
 
+  // Initialize theme on first load
+  useEffect(() => {
+    const initializeTheme = () => {
+      const savedTheme = localStorage.getItem("haraka-theme");
+      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = savedTheme || (systemDark ? "dark" : "light");
+      
+      document.documentElement.classList.toggle("dark", theme === "dark");
+      localStorage.setItem("haraka-theme", theme);
+    };
+    
+    initializeTheme();
+  }, []);
+
   // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
@@ -108,7 +122,7 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gray-900">
+      <div className="h-screen w-screen flex items-center justify-center bg-white dark:bg-slate-900">
         <LoadingWave size="lg" color="#60A5FA" message="جاري تحميل النظام..." />
       </div>
     );
@@ -119,7 +133,7 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App bg-white dark:bg-slate-900 min-h-screen">
       <Navbar
         name={"جهاز مستقبل مصر"}
         user={user}
@@ -127,7 +141,7 @@ function App() {
         currentWindow={currentWindow}
         setCurrentWindow={setCurrentWindow}
       />
-      <main className="main-content">{renderCurrentWindow()}</main>
+      <main className="main-content bg-white dark:bg-slate-900">{renderCurrentWindow()}</main>
     </div>
   );
 }

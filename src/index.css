@@ -15,6 +15,13 @@
     line-height: 1.6;
   }
 
+  /* Light theme for body */
+  .light body,
+  [data-theme="light"] body {
+    background-color: #ffffff;
+    color: #1f2937;
+  }
+
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
       monospace;
@@ -48,7 +55,7 @@
   }
 
   .card {
-    @apply bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700;
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700;
   }
 
   .input-field {
