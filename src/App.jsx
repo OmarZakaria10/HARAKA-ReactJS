@@ -19,13 +19,15 @@ function App() {
   useEffect(() => {
     const initializeTheme = () => {
       const savedTheme = localStorage.getItem("haraka-theme");
-      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const systemDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
       const theme = savedTheme || (systemDark ? "dark" : "light");
-      
+
       document.documentElement.classList.toggle("dark", theme === "dark");
       localStorage.setItem("haraka-theme", theme);
     };
-    
+
     initializeTheme();
   }, []);
 
@@ -141,7 +143,9 @@ function App() {
         currentWindow={currentWindow}
         setCurrentWindow={setCurrentWindow}
       />
-      <main className="main-content bg-white dark:bg-slate-900">{renderCurrentWindow()}</main>
+      <main className="main-content bg-white dark:bg-slate-900">
+        {renderCurrentWindow()}
+      </main>
     </div>
   );
 }

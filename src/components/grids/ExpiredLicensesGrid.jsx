@@ -1,9 +1,9 @@
 "use client";
-import  { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import DataGrid from "./DataGrid";
 import { endPoints } from "../../services/endPoints";
-import licensesHeaders from "../../services/licensesHeaders";
-import {Headers} from "../../services/vehicleHeaders";
+import expiredLicensesHeaders from "../../services/expiredLicensesHeaders";
+import { Headers } from "../../services/vehicleHeaders";
 // import Button from "../Button";
 import PopUp from "../PopUp";
 import AssociatedDataForm from "../forms/AssociatedDataForm";
@@ -42,7 +42,7 @@ const ExpiredLicensesGrid = ({ direction = "rtl" }) => {
   }, [selectedDate]);
 
   const config = {
-    headers: licensesHeaders,
+    headers: expiredLicensesHeaders,
     fetchData,
     labels: {
       exportFileName: "الرخص المنتهية",
@@ -77,10 +77,7 @@ const ExpiredLicensesGrid = ({ direction = "rtl" }) => {
         buttonTitle="عرض المركبة"
       >
         {selectedItems.length === 1 ? (
-          <AssociatedDataForm
-            license={selectedItems[0]}
-            headers={Headers}
-          />
+          <AssociatedDataForm license={selectedItems[0]} headers={Headers} />
         ) : (
           <div className="text-xl text-center text-blue-200">
             الرجاء اختيار رخصة واحدة لعرض مركبتها
