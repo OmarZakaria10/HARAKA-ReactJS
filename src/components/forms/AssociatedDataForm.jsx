@@ -47,7 +47,7 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
 
   if (error) {
     return (
-      <div className="text-xl text-center font-medium text-red-400">
+      <div className="text-xl text-center font-medium text-red-600 dark:text-red-400">
         {error}
       </div>
     );
@@ -55,7 +55,7 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
 
   if (!associatedData) {
     return (
-      <div className="text-xl text-center font-medium text-blue-200">
+      <div className="text-xl text-center font-medium text-blue-600 dark:text-blue-300">
         لا توجد رخصة مرتبطة بهذه المركبة
       </div>
     );
@@ -63,20 +63,20 @@ export default function AssociatedLicenseForm({ vehicle, license, headers }) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="p-4 sm:p-6 rounded-xl bg-gray-800 shadow-xl border border-gray-700">
+      <div className="p-4 sm:p-6 rounded-xl bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {headers.map((header) => (
             <div key={header.field} className="space-y-2">
               <div className="block text-right">
                 <Label
                   htmlFor={header.field}
-                  className="text-gray-300 text-sm sm:text-base font-medium"
+                  className="text-gray-700 dark:text-gray-300 text-sm sm:text-base font-medium"
                 >
                   {header.headerName}
                 </Label>
               </div>
               <input
-                className="w-full text-right rounded-lg border border-gray-600 bg-gray-700 p-2.5 sm:p-3 text-white text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full text-right rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 p-2.5 sm:p-3 text-gray-900 dark:text-white text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 dir="rtl"
                 id={header.field}
                 value={associatedData[header.field] || "غير متوفر"}

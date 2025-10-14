@@ -550,9 +550,9 @@ const DataGrid = ({
     >
       {/* Enhanced Modern Toolbar */}
       <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 rounded-t-xl">
-        <div className="flex justify-between items-center px-6 py-4">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 px-3 sm:px-6 py-3 sm:py-4">
           {/* Left side - Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {features.export && (
               <CustomButton
                 onClick={handleExcelExport}
@@ -597,15 +597,15 @@ const DataGrid = ({
           </div>
 
           {/* Center - Search Input */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto lg:flex-1 lg:justify-center">
+            <div className="relative w-full sm:w-auto sm:max-w-xs">
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder={labels.searchPlaceholder || "البحث في الجدول..."}
-                className="w-64 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1C64F2] focus:border-transparent transition-all duration-200"
+                className="w-full sm:w-56 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1C64F2] focus:border-transparent transition-all duration-200"
                 dir="rtl"
               />
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
@@ -681,7 +681,9 @@ const DataGrid = ({
           </div>
 
           {/* Right side - Additional Controls */}
-          <div className="flex items-center gap-3">{children}</div>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
+            {children}
+          </div>
         </div>
       </div>
 

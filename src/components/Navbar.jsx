@@ -313,7 +313,7 @@ export default function NavbarComponent({
                     />
                     <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
-                  <span className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 dark:text-white truncate max-w-32 sm:max-w-none bg-gradient-to-r from-slate-900 to-blue-800 dark:from-white dark:to-blue-200 bg-clip-text text-transparent">
+                  <span className="hidden sm:inline-block text-sm sm:text-base lg:text-lg font-bold text-slate-900 dark:text-white whitespace-nowrap bg-gradient-to-r from-slate-900 to-blue-800 dark:from-white dark:to-blue-200 bg-clip-text text-transparent">
                     {name || "جهاز مستقبل مصر"}
                   </span>
                 </a>

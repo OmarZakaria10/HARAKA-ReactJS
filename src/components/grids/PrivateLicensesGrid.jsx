@@ -94,20 +94,29 @@ const PrivateLicensesGrid = ({ direction = "rtl" }) => {
       onSelectionChange={handleSelectionChange}
     >
       {/* Insurance Status Update Controls */}
-      <div className="flex items-center gap-3 bg-gray-800 p-3 rounded-lg border border-gray-700">
+      <div className="flex items-center gap-3 p-3 rounded-lg border border-blue-200 dark:border-gray-700 bg-[#DFEAFF] dark:bg-gray-800">
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-300 whitespace-nowrap">
             حالة التأمين:
           </label>
           <select
             value={insuranceStatus}
             onChange={(e) => setInsuranceStatus(e.target.value)}
-            className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[200px]"
+            className="px-3 py-2 bg-white dark:bg-gray-700 border border-blue-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent min-w-[200px]"
             disabled={isUpdating}
           >
-            <option value="">اختر حالة التأمين</option>
+            <option
+              value=""
+              className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              اختر حالة التأمين
+            </option>
             {ValidInsuranceStatus.map((status) => (
-              <option key={status} value={status}>
+              <option
+                key={status}
+                value={status}
+                className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
                 {status}
               </option>
             ))}
@@ -126,7 +135,7 @@ const PrivateLicensesGrid = ({ direction = "rtl" }) => {
         </CustomButton>
 
         {selectedItems.length > 0 && (
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-600 dark:text-gray-400">
             ({selectedItems.length} مركبة محددة)
           </span>
         )}

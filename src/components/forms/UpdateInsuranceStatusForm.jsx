@@ -59,31 +59,40 @@ const UpdateInsuranceStatusForm = ({
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg max-w-md mx-auto">
-      <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
+    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg max-w-md mx-auto">
+      <h2 className="text-xl font-bold text-center mb-6 text-gray-800 dark:text-white">
         تحديث حالة التأمين
       </h2>
 
       <div className="mb-4">
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
           عدد المركبات المحددة: {selectedVehicles.length}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             حالة التأمين الجديدة
           </label>
           <select
             value={insuranceStatus}
             onChange={(e) => setInsuranceStatus(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
             required
           >
-            <option value="">اختر حالة التأمين</option>
+            <option
+              value=""
+              className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              اختر حالة التأمين
+            </option>
             {ValidInsuranceStatus.map((status) => (
-              <option key={status} value={status}>
+              <option
+                key={status}
+                value={status}
+                className="bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
                 {status}
               </option>
             ))}
