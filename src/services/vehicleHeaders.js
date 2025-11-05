@@ -149,6 +149,7 @@ const fieldHeaderMappings = {
   insurance_policy: "بوليصة",
   customs_clearance: "إفراج جمركي",
   insurance_document: "وثيقة التأمين",
+  date_added_to_inventory: "تاريخ الإضافة",
   license_status: "موقف الترخيص",
   notes: "الملاحظات",
 };
