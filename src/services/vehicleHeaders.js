@@ -100,7 +100,6 @@ const vehiclesRoleColumns = {
     "administration",
     "responsible_person",
     "license_status",
-    "notes",
   ],
   license: [
     // License role has restricted columns focused on licensing
