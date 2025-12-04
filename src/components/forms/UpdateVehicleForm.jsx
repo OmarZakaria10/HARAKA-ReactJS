@@ -1,11 +1,12 @@
 import { Button, Label } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
-import { Headers } from "../../services/vehicleHeaders";
+import { Headers, getHeadersByRole } from "../../services/vehicleHeaders";
 import { endPoints } from "../../services/endPoints";
 import PopUp from "../PopUp";
 import AddLicenseForm from "./AddLicenseForm";
 
 export default function UpdateVehicleForm({
+  user,
   vehicle,
   onSubmitSuccess,
   onCancel,
@@ -82,7 +83,7 @@ export default function UpdateVehicleForm({
     <>
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {Headers.map((header, index) => (
+          {getHeadersByRole(user?.role).map((header, index) => (
             <div key={header.field} className="space-y-2">
               <div className="block text-right">
                 <Label

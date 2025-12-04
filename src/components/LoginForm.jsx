@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LoadingWave from "./LoadingWave";
-
+import { endPoints } from "../services/endPoints";
 export default function LoginForm({ onLoginSuccess }) {
   const [formData, setFormData] = useState({
     username: "",
@@ -25,38 +25,38 @@ export default function LoginForm({ onLoginSuccess }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://haraka-asnt.onrender.com/users/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: formData.username,
-            password: formData.password,
-          }),
-          credentials: "include", // Important for receiving cookies
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // If remember me is checked, store the token
-        if (formData.remember && data.token) {
-          localStorage.setItem("token", data.token);
-        }
-        onLoginSuccess(data.data.user);
-      } else {
-        setError(data.message || "فشل في تسجيل الدخول");
+      const data = await endPoints.login(formData.username, formData.password);
+      // If remember me is checked, store the token
+      if (formData.remember && data.token) {
+        localStorage.setItem("token", data.token);
       }
+
+      // Fetch full user profile (ensures fields like `role` are present)
+      // This avoids the app showing a loading state in child components
+      // that rely on `user.role` immediately after login.
+      try {
+        const me = await endPoints.getMe();
+        onLoginSuccess(me.data.user || data.user);
+      } catch (fetchErr) {
+        // If fetching /me fails, fall back to login response user
+        console.warn("Failed to fetch full user after login:", fetchErr);
+        onLoginSuccess(data.user);
+      }
+
     } catch (err) {
       console.error("Login error:", err);
-      setError("حدث خطأ في الاتصال بالخادم");
+
+      // Axios errors contain `response`
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("فشل في تسجيل الدخول");
+      }
+
     } finally {
       setIsLoading(false);
     }
+
   };
 
   return (

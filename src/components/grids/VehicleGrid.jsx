@@ -135,6 +135,7 @@ const VehicleGrid = ({ direction = "rtl", user }) => {
         >
           {selectedItems.length === 1 && (
             <UpdateVehicleForm
+              user={user}
               vehicle={selectedItems[0]}
               onSubmitSuccess={() => {
                 setShowUpdateModal(false);

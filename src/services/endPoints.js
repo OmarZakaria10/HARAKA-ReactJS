@@ -5,13 +5,27 @@ class Axios {
 
   constructor() {
     this.api = axios.create({
-      baseURL: "https://haraka-asnt.onrender.com",
+      // baseURL: "https://haraka-asnt.onrender.com",
+      // baseURL: "http://localhost:4000",
+      baseURL: "https://haraka-x2fx.onrender.com",
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
     });
+
+    this.api.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 403) {
+          alert("⚠️ لا تملك الصلاحية للقيام بهذا الإجراء");
+        }
+        throw error; // continue throwing the error
+      }
+    );
   }
+
+  
 
   static getInstance() {
     if (!Axios.instance) {
@@ -19,6 +33,52 @@ class Axios {
     }
     return Axios.instance;
   }
+
+  
+  // User API methods
+  async login(username, password) {
+    try {
+      const response = await this.api.post("/users/login", {
+        username,
+        password,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async logout() {
+    try {
+      const response = await this.api.post("/users/logout");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMe() {
+    try {
+      const response = await this.api.get("/users/me");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getMeWithToken(token) {
+    try {
+      const response = await this.api.get("/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
 
   // Vehicle API methods
   async getAllVehicles() {

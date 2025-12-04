@@ -9,6 +9,7 @@ import ExpiredLicensesGrid from "./components/grids/ExpiredLicensesGrid";
 import MilitaryLicenseGrid from "./components/grids/MilitaryLicenseGrid";
 import PrivateLicensesGrid from "./components/grids/PrivateLicensesGrid";
 import ReportsGrid from "./components/grids/ReportsGrid";
+import { endPoints } from "./services/endPoints";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -35,53 +36,34 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // First try cookie-based authentication
-        const response = await fetch(
-          "https://haraka-asnt.onrender.com/users/me",
-          {
-            method: "GET",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data.data.user);
+        // 1) Try cookie-based authentication
+        try {
+          const cookieData = await endPoints.getMe();
+          setUser(cookieData.data.user);
           console.log("Authenticated via cookie");
-        } else {
-          // If cookie auth fails, try localStorage token
-          const token = localStorage.getItem("token");
-          if (token) {
-            console.log("Trying token auth");
-            const tokenResponse = await fetch(
-              "https://haraka-express.onrender.com/users/me",
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-                },
-                credentials: "include",
-              }
-            );
+          return;
+        } catch (err) {
+          console.log("Cookie auth failed");
+        }
 
-            if (tokenResponse.ok) {
-              const tokenData = await tokenResponse.json();
-              setUser(tokenData.data.user);
-              console.log("Authenticated via token");
-            } else {
-              // Token is invalid, remove it
-              console.log("Token invalid, removing");
-              localStorage.removeItem("token");
-            }
+        // 2) Try token-based authentication
+        const token = localStorage.getItem("token");
+        if (token) {
+          try {
+            console.log("Trying token auth");
+
+            const tokenData = await endPoints.getMeWithToken(token);
+
+            setUser(tokenData.data.user);
+            console.log("Authenticated via token");
+            return;
+          } catch (err) {
+            console.log("Token invalid, removing");
+            localStorage.removeItem("token");
           }
         }
       } catch (error) {
         console.error("Auth check failed:", error);
-        // Clear potentially invalid token
         localStorage.removeItem("token");
       } finally {
         setIsLoading(false);
@@ -90,6 +72,8 @@ function App() {
 
     checkAuth();
   }, []);
+
+
 
   const handleLoginSuccess = (userData) => {
     console.log("Login successful:", userData);

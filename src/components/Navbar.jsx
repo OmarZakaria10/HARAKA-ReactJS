@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import logo from "../assets/FOE.png";
 import LoadingWave from "./LoadingWave";
+import { endPoints } from "../services/endPoints";
+
 // import "./Navbar.css";
 
 export default function NavbarComponent({
@@ -240,38 +242,32 @@ export default function NavbarComponent({
     setIsUserMenuOpen(false);
 
     try {
+      // Remove local token immediately
       localStorage.removeItem("token");
 
-      const response = await fetch(
-        "https://haraka-asnt.onrender.com/users/logout",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
+      try {
+        await endPoints.logout();
         console.log("Server logout successful");
-      } else {
+      } catch (err) {
         console.warn(
           "Server logout failed, but continuing with client-side cleanup"
         );
+        console.error("Logout error:", err);
       }
-    } catch (error) {
-      console.error("Logout request failed:", error);
-    }
 
-    if (onLogout) {
-      onLogout();
-    }
+    } finally {
+      if (onLogout) {
+        onLogout();
+      }
 
-    setTimeout(() => {
-      window.location.href = window.location.origin;
-    }, 100);
+      setTimeout(() => {
+        window.location.href = window.location.origin;
+      }, 100);
+
+      setIsLoggingOut(false);
+    }
   };
+
 
   const NavigationLoadingOverlay = () =>
     isLoading && (
