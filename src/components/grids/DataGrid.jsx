@@ -716,7 +716,8 @@ const DataGrid = ({
             animateRows={true}
             enableCellTextSelection={true}
             pagination={true}
-            paginationPageSize={10000}
+            paginationPageSize={3000}
+            paginationPageSizeSelector={[20, 50, 100, 500, 1000, 3000, 5000]}
             overlayLoadingTemplate='<span class="ag-overlay-loading-center">جاري التحميل...</span>'
             overlayNoRowsTemplate='<span class="ag-overlay-no-rows-center">لا توجد بيانات</span>'
           />
